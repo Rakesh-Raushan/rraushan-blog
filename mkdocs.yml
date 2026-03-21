@@ -91,7 +91,7 @@ extra:
       name: Email
   analytics:
       provider: google
-      tracking_id: G-2V1DQP2HE9
+      property: G-2V1DQP2HE9
 
 nav:
   - Custom: docs/posts/quantization.html
