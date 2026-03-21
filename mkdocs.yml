@@ -93,5 +93,7 @@ extra:
       provider: google
       property: G-2V1DQP2HE9
 
-nav:
-  - Custom: docs/posts/quantization.html
+hooks:
+  - overrides/hooks/views_badge.py
+# nav:
+#   - Custom: docs/posts/quantization.html
