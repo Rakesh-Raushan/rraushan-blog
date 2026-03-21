@@ -89,6 +89,9 @@ extra:
     - icon: fontawesome/solid/envelope
       link: mailto:mod.rakesh24@gmail.com
       name: Email
+  analytics:
+      provider: google
+      tracking_id: G-2V1DQP2HE9
 
 nav:
   - Custom: docs/posts/quantization.html
