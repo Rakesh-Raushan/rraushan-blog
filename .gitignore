@@ -8,3 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Private reference docs
+README.md
+plans.md

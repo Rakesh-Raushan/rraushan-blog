@@ -5,5 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "mkdocs-awesome-pages-plugin>=2.10.1",
     "mkdocs-material[blog]>=9.7.6",
 ]
