@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stack · Linked List · Doubly Linked List</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #fffefb;
+    --ink: #1a1816;
+    --ink2: #4a4540;
+    --ink3: #8a8278;
+    --accent: #c84b2f;
+    --accent2: #2a5f8f;
+    --accent3: #2a7a4f;
+    --border: rgba(26,24,22,0.1);
+    --border2: rgba(26,24,22,0.06);
+    --yellow: #f5e6a3;
+    --yellow-ink: #7a5c00;
+    --code-bg: #f0ede6;
+    --mental-bg: #f0edf8;
+    --mental-border: #7c5cbf;
+    --mental-ink: #3a2060;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 15px;
+    font-weight: 300;
+  }
+  .page { max-width: 780px; margin: 0 auto; padding: 56px 32px 96px; }
+
+  .doc-title { font-family: 'Instrument Serif', serif; font-size: 42px; font-weight: 400; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .doc-subtitle { font-size: 14px; color: var(--ink3); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 48px; }
+
+  .section { margin-bottom: 60px; }
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px; font-weight: 400;
+    margin-bottom: 20px; padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .section-title .tag {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 400;
+    color: var(--ink3); letter-spacing: 0.08em; text-transform: uppercase;
+    display: block; margin-bottom: 4px;
+  }
+  .subsection { margin: 32px 0 0; }
+  .subsection-title {
+    font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: 19px; font-weight: 400; color: var(--ink);
+    margin-bottom: 14px;
+  }
+
+  p { margin-bottom: 14px; color: var(--ink2); }
+  p:last-child { margin-bottom: 0; }
+
+  .callout {
+    background: var(--surface); border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0; padding: 14px 18px; margin: 20px 0;
+    font-size: 14px; color: var(--ink2);
+  }
+  .callout strong { color: var(--ink); font-weight: 500; }
+  .callout-blue { border-left-color: var(--accent2); }
+  .callout-green { border-left-color: var(--accent3); }
+
+  /* Mental model box — distinct purple */
+  .mental-model {
+    background: var(--mental-bg);
+    border: 1px solid rgba(124,92,191,0.25);
+    border-left: 3px solid var(--mental-border);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 24px 0;
+  }
+  .mental-model .mm-title {
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--mental-border); margin-bottom: 10px;
+  }
+  .mental-model ul { list-style: none; padding: 0; }
+  .mental-model ul li {
+    position: relative; padding-left: 20px;
+    font-size: 14px; color: var(--mental-ink);
+    margin-bottom: 7px; line-height: 1.6;
+  }
+  .mental-model ul li::before {
+    content: '◆'; position: absolute; left: 0; top: 1px;
+    font-size: 8px; color: var(--mental-border);
+  }
+  .mental-model ul li:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    background: var(--code-bg); padding: 1px 5px; border-radius: 3px; color: var(--accent);
+  }
+  pre {
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    background: #1e1c1a; color: #d4cfc8;
+    border-radius: 8px; padding: 20px 22px;
+    line-height: 1.65; overflow-x: auto; margin: 16px 0;
+  }
+  pre .kw  { color: #c084fc; }
+  pre .fn  { color: #60d4a8; }
+  pre .st  { color: #f5c068; }
+  pre .cm  { color: #6a6560; font-style: italic; }
+  pre .num { color: #7ec8e3; }
+  pre .cl  { color: #fbbf24; }
+
+  /* Tables */
+  .data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .data-table th {
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink3); font-weight: 400;
+    text-align: left; padding: 8px 14px; border-bottom: 1px solid var(--border);
+  }
+  .data-table td { padding: 10px 14px; border-bottom: 1px solid var(--border2); color: var(--ink2); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .o1 { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent3); font-weight: 500; }
+  .on { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 500; }
+  .o1a { font-family: 'DM Mono', monospace; font-size: 13px; color: #2a7a9f; font-weight: 500; }
+  .highlight-row td { background: rgba(42,95,143,0.05); }
+  .winner { font-size: 11px; font-family: 'DM Mono', monospace; }
+  .win-arr { color: var(--accent3); }
+  .win-ll  { color: var(--accent2); }
+
+  /* Patterns grid */
+  .patterns-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .pattern-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .pattern-card .pc-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .pattern-card .pc-desc  { font-size: 12px; color: var(--ink3); line-height: 1.5; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  svg.inline-fig { display: block; width: 100%; max-width: 640px; margin: 20px 0; }
+
+  .steps { counter-reset: step; list-style: none; margin: 14px 0; }
+  .steps li {
+    counter-increment: step; position: relative;
+    padding-left: 32px; margin-bottom: 8px; font-size: 14px; color: var(--ink2);
+  }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: 0;
+    width: 20px; height: 20px; background: var(--ink); color: var(--bg);
+    border-radius: 50%; font-family: 'DM Mono', monospace; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; font-weight: 500; margin-top: 2px;
+  }
+
+  @media (max-width: 520px) {
+    .patterns-grid { grid-template-columns: 1fr; }
+    .page { padding: 32px 20px 64px; }
+    .doc-title { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1 class="doc-title">DSA Notes</h1>
+  <p class="doc-subtitle">Chunk 2 — Stack · Linked List · Doubly Linked List</p>
+
+  <!-- ============================================================ STACK -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Linear Data Structure</span>Stack</h2>
+
+    <p>A stack is defined by three operations — and the constraint that all three must be <code>O(1)</code>:</p>
+
+    <table class="data-table">
+      <thead><tr><th>Operation</th><th>Description</th><th>Complexity</th></tr></thead>
+      <tbody>
+        <tr><td><code>push(x)</code></td><td>Add element to top</td><td class="o1">O(1)</td></tr>
+        <tr><td><code>pop()</code></td><td>Remove + return top element</td><td class="o1">O(1)</td></tr>
+        <tr><td><code>peek()</code></td><td>Look at top element without removing</td><td class="o1">O(1)</td></tr>
+        <tr><td><code>isEmpty()</code></td><td>Check if empty</td><td class="o1">O(1)</td></tr>
+        <tr><td><code>size()</code></td><td>Return number of elements</td><td class="o1">O(1)</td></tr>
+      </tbody>
+    </table>
+
+    <!-- LIFO visual -->
+    <svg class="inline-fig" viewBox="0 0 620 120" role="img">
+      <title>Stack LIFO: push 1,2,4 then pop gives 4,2,1</title>
+      <defs>
+        <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8278" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arwg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2a7a4f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arwr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#c84b2f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- push side: stack building up -->
+      <text x="10" y="16" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">push(1), push(2), push(4)</text>
+      <rect x="10" y="72" width="60" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <rect x="10" y="40" width="60" height="30" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="0.8" opacity="0.7"/>
+      <rect x="10" y="24" width="60" height="16" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1.2"/>
+      <text x="40" y="84" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#4a4540">1</text>
+      <text x="40" y="59" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#c84b2f" opacity="0.7">2</text>
+      <text x="40" y="36" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#c84b2f" font-weight="500">4 ← top</text>
+      <!-- arrow -->
+      <line x1="90" y1="55" x2="160" y2="55" stroke="#c0bab2" stroke-width="1" marker-end="url(#arw)"/>
+      <text x="124" y="48" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">pop ×3</text>
+      <!-- pop side -->
+      <text x="168" y="16" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">pop order → LIFO</text>
+      <rect x="168" y="30" width="50" height="28" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1.2"/>
+      <rect x="230" y="30" width="50" height="28" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="0.8" opacity="0.6"/>
+      <rect x="292" y="30" width="50" height="28" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <text x="193" y="50" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#c84b2f" font-weight="500">4</text>
+      <text x="255" y="50" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#c84b2f" opacity="0.6">2</text>
+      <text x="317" y="50" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#4a4540">1</text>
+      <text x="193" y="74" text-anchor="middle" font-family="DM Sans,monospace" font-size="11" fill="#c84b2f">1st</text>
+      <text x="255" y="74" text-anchor="middle" font-family="DM Sans,monospace" font-size="11" fill="#8a8278">2nd</text>
+      <text x="317" y="74" text-anchor="middle" font-family="DM Sans,monospace" font-size="11" fill="#8a8278">3rd</text>
+      <!-- LIFO label -->
+      <rect x="360" y="25" width="240" height="60" rx="8" fill="var(--surface,#fffefb)" stroke="rgba(26,24,22,0.08)" stroke-width="0.8"/>
+      <text x="480" y="48" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#1a1816" font-weight="500">LIFO</text>
+      <text x="480" y="68" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#8a8278">Last In, First Out</text>
+    </svg>
+
+    <!-- In Practice -->
+    <div class="subsection">
+      <h3 class="subsection-title">In practice — Python</h3>
+      <p>You don't implement stacks from scratch in interview problems. A Python <code>list</code> or <code>deque</code> works. The key difference:</p>
+
+      <table class="data-table">
+        <thead><tr><th>Stack operation</th><th>list</th><th>deque</th><th>Complexity</th></tr></thead>
+        <tbody>
+          <tr><td>push</td><td><code>s.append(x)</code></td><td><code>s.append(x)</code></td><td><span class="o1">O(1)</span> <small style="color:var(--ink3)">amort. / guaranteed</small></td></tr>
+          <tr><td>pop</td><td><code>s.pop()</code></td><td><code>s.pop()</code></td><td class="o1">O(1)</td></tr>
+          <tr><td>peek</td><td><code>s[-1]</code></td><td><code>s[-1]</code></td><td class="o1">O(1)</td></tr>
+          <tr><td>isEmpty</td><td><code>len(s) == 0</code></td><td><code>len(s) == 0</code></td><td class="o1">O(1)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-blue">
+        <strong>list vs deque:</strong> <code>list.append</code> is O(1) amortized (can resize). <code>deque.append</code> is O(1) guaranteed — backed by a doubly-linked list of fixed-size blocks, no resizing. For stack-only use, <code>list</code> is fine. Use <code>deque</code> when you also need queue operations (append/pop from both ends).
+      </div>
+    </div>
+
+    <!-- Scratch implementation -->
+    <div class="subsection">
+      <h3 class="subsection-title">If asked to implement from scratch</h3>
+<pre><span class="kw">class</span> <span class="cl">Stack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+        <span class="kw">self</span>._data = []
+
+    <span class="kw">def</span> <span class="fn">push</span>(<span class="kw">self</span>, x):
+        <span class="kw">self</span>._data.append(x)            <span class="cm"># O(1) amortized</span>
+
+    <span class="kw">def</span> <span class="fn">pop</span>(<span class="kw">self</span>):
+        <span class="kw">if</span> <span class="kw">self</span>.is_empty():
+            <span class="kw">raise</span> <span class="cl">IndexError</span>(<span class="st">"pop from empty stack"</span>)
+        <span class="kw">return</span> <span class="kw">self</span>._data.pop()          <span class="cm"># O(1)</span>
+
+    <span class="kw">def</span> <span class="fn">peek</span>(<span class="kw">self</span>):
+        <span class="kw">if</span> <span class="kw">self</span>.is_empty():
+            <span class="kw">raise</span> <span class="cl">IndexError</span>(<span class="st">"peek from empty stack"</span>)
+        <span class="kw">return</span> <span class="kw">self</span>._data[-<span class="num">1</span>]            <span class="cm"># O(1)</span>
+
+    <span class="kw">def</span> <span class="fn">is_empty</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> len(<span class="kw">self</span>._data) == <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">size</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> len(<span class="kw">self</span>._data)</pre>
+    </div>
+
+    <!-- Common patterns -->
+    <div class="subsection">
+      <h3 class="subsection-title">When to reach for a stack — common patterns</h3>
+      <p>These problem signatures should <em>immediately</em> suggest a stack:</p>
+      <div class="patterns-grid">
+        <div class="pattern-card">
+          <div class="pc-title">Bracket / parenthesis matching</div>
+          <div class="pc-desc">Push opens, pop and verify on close. Classic <code>()[]{}</code> validity check.</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-title">Next greater / smaller element</div>
+          <div class="pc-desc">Monotonic stack: maintain a stack of candidates, pop when current element beats them.</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-title">Tracking running min/max</div>
+          <div class="pc-desc">Use a second "min stack" alongside the main stack. Each entry stores (val, current_min).</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-title">Undo / backtrack state</div>
+          <div class="pc-desc">Browser history, text editor undo — push state, pop to go back.</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-title">Expression evaluation</div>
+          <div class="pc-desc">Infix → postfix, evaluate RPN. Operators and operands pushed/popped in order.</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-title">DFS iterative</div>
+          <div class="pc-desc">Replace the call stack with an explicit stack when doing iterative depth-first traversal of graphs/trees.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mental-model">
+      <div class="mm-title">Mental Model — Stack</div>
+      <ul>
+        <li>Only the <strong>top</strong> matters. You never reach into the middle.</li>
+        <li>If a problem needs you to remember "what came before" and reverse it, think stack.</li>
+        <li>LIFO = the last thing you pushed is the first thing you deal with — very natural for nested structures (brackets, recursive calls, DFS).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================================ LINKED LIST -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Linear Data Structure</span>Linked List</h2>
+
+    <p>A linked list is a sequence of <strong style="font-weight:500">nodes</strong>. Each node is an object that holds two things:</p>
+
+    <!-- Node visual -->
+    <svg class="inline-fig" viewBox="0 0 620 80" role="img">
+      <title>A ListNode has a value field and a next pointer to another node</title>
+      <defs>
+        <marker id="arwb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- node A -->
+      <rect x="20" y="18" width="180" height="48" rx="6" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1.2"/>
+      <line x1="110" y1="18" x2="110" y2="66" stroke="#2a5f8f" stroke-width="0.8"/>
+      <text x="65"  y="37" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">val</text>
+      <text x="65"  y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="18" fill="#2a5f8f" font-weight="500">2</text>
+      <text x="145" y="37" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">next</text>
+      <text x="145" y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">→ node</text>
+      <!-- pointer arrow -->
+      <line x1="202" y1="42" x2="260" y2="42" stroke="#2a5f8f" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arwb)"/>
+      <!-- node B -->
+      <rect x="262" y="18" width="180" height="48" rx="6" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1.2"/>
+      <line x1="352" y1="18" x2="352" y2="66" stroke="#2a5f8f" stroke-width="0.8"/>
+      <text x="307" y="37" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">val</text>
+      <text x="307" y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="18" fill="#2a5f8f" font-weight="500">5</text>
+      <text x="387" y="37" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">next</text>
+      <text x="387" y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">→ node</text>
+      <!-- pointer arrow -->
+      <line x1="444" y1="42" x2="502" y2="42" stroke="#2a5f8f" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arwb)"/>
+      <!-- node C None -->
+      <rect x="504" y="18" width="100" height="48" rx="6" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1.2"/>
+      <line x1="554" y1="18" x2="554" y2="66" stroke="#2a5f8f" stroke-width="0.8"/>
+      <text x="529" y="37" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">val</text>
+      <text x="529" y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="18" fill="#2a5f8f" font-weight="500">7</text>
+      <text x="578" y="37" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">next</text>
+      <text x="578" y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#c0bab2">None</text>
+    </svg>
+
+    <div class="callout callout-blue">
+      <strong>Critical distinction:</strong> <code>node.next</code> is a reference to another <em>node object</em> — not to a value, not to a pointer. When you write <code>curr = curr.next</code>, curr becomes the next node, and you now have access to <em>that</em> node's <code>.val</code> and <code>.next</code>. Confusing nodes with values causes bugs in almost every linked list problem.
+    </div>
+
+    <p>Unlike arrays, nodes can live <em>anywhere</em> in memory — no contiguous block required. The pointer is what chains them together.</p>
+
+    <!-- Scattered memory visual -->
+    <svg class="inline-fig" viewBox="0 0 620 90" role="img">
+      <title>Linked list nodes scattered in memory vs array contiguous block</title>
+      <!-- scattered nodes -->
+      <text x="10" y="16" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">Linked list — nodes anywhere in memory</text>
+      <rect x="10"  y="24" width="60" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="0.8"/>
+      <text x="40"  y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f">2</text>
+      <rect x="140" y="44" width="60" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="0.8"/>
+      <text x="170" y="64" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f">5</text>
+      <rect x="80"  y="56" width="60" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="0.8"/>
+      <text x="110" y="76" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f">1</text>
+      <path d="M70 37 Q105 20 140 55" fill="none" stroke="#2a5f8f" stroke-width="0.8" stroke-dasharray="4 3" marker-end="url(#arwb)"/>
+      <path d="M140 72 Q120 90 110 88" fill="none" stroke="#2a5f8f" stroke-width="0.8" stroke-dasharray="4 3" marker-end="url(#arwb)"/>
+      <defs>
+        <marker id="arwb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- vs array contiguous -->
+      <text x="340" y="16" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">Array — contiguous block</text>
+      <rect x="340" y="24" width="60" height="30" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="0.8"/>
+      <rect x="402" y="24" width="60" height="30" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="0.8"/>
+      <rect x="464" y="24" width="60" height="30" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="0.8"/>
+      <text x="370" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#c84b2f">2</text>
+      <text x="432" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#c84b2f">5</text>
+      <text x="494" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#c84b2f">1</text>
+    </svg>
+
+    <!-- Traversal -->
+    <div class="subsection">
+      <h3 class="subsection-title">Traversal</h3>
+      <p>Use a <code>curr</code> pointer and advance with <code>curr = curr.next</code>. The golden rule:</p>
+      <div class="callout">
+        <strong>Always check before you dereference.</strong> Before accessing <code>curr.next</code>, check <code>curr is not None</code>. Before accessing <code>curr.next.next</code>, check both <code>curr</code> and <code>curr.next</code> exist. This is the source of most linked list bugs.
+      </div>
+<pre><span class="cm"># Standard traversal</span>
+curr = head
+<span class="kw">while</span> curr:               <span class="cm"># checks curr != None</span>
+    <span class="cm"># do something with curr.val</span>
+    curr = curr.next
+
+<span class="cm"># When you need .next.next — check both</span>
+<span class="kw">while</span> curr <span class="kw">and</span> curr.next:
+    curr = curr.next.next</pre>
+    </div>
+
+    <!-- Head / Tail -->
+    <div class="subsection">
+      <h3 class="subsection-title">Head and tail</h3>
+      <p><code>head</code> = the first node object. <code>tail</code> = the last node object. They are node references, not values. <code>tail.next = None</code> always — that's how you know you've reached the end.</p>
+    </div>
+
+    <!-- Insert / Remove -->
+    <div class="subsection">
+      <h3 class="subsection-title">Inserting a node</h3>
+      <p>If you know the position, insertion itself is O(1) — just redirect pointers. The rule to never forget:</p>
+
+      <div class="callout">
+        <strong>Hold before you break.</strong> Before reassigning any pointer that you'll still need, save it in a temp variable. Then reconnect.
+      </div>
+
+      <!-- Insert visual -->
+      <svg class="inline-fig" viewBox="0 0 620 130" role="img">
+        <title>Inserting a node between A and B: hold B in temp, set A.next = new_node, set new_node.next = temp</title>
+        <defs>
+          <marker id="arwg2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#2a7a4f" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+          <marker id="arwr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#c84b2f" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+          <marker id="arwb2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+        </defs>
+        <!-- before -->
+        <text x="10" y="15" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">step 1: temp = A.next  (hold B)</text>
+        <rect x="10"  y="24" width="90" height="34" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+        <text x="55"  y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a5f8f">A</text>
+        <line x1="102" y1="41" x2="148" y2="41" stroke="#c0bab2" stroke-width="1.2" marker-end="url(#arwb2)"/>
+        <rect x="150" y="24" width="90" height="34" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+        <text x="195" y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a5f8f">B</text>
+        <text x="110" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#c0bab2">temp →</text>
+        <!-- new node -->
+        <text x="10" y="80" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">step 2: A.next = new_node    step 3: new_node.next = temp</text>
+        <rect x="10"  y="90" width="90" height="34" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+        <text x="55"  y="112" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a5f8f">A</text>
+        <line x1="102" y1="107" x2="148" y2="107" stroke="#2a7a4f" stroke-width="1.5" marker-end="url(#arwg2)"/>
+        <rect x="150" y="90" width="100" height="34" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1.5"/>
+        <text x="200" y="112" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">new_node</text>
+        <line x1="252" y1="107" x2="300" y2="107" stroke="#c84b2f" stroke-width="1.5" marker-end="url(#arwr2)"/>
+        <rect x="302" y="90" width="90" height="34" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+        <text x="347" y="112" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a5f8f">B</text>
+        <text x="200" y="130" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">← inserted</text>
+      </svg>
+    </div>
+
+    <div class="subsection">
+      <h3 class="subsection-title">Removing a node</h3>
+      <p>General removal: <code>node.next = node.next.next</code> — skip over the target. But finding the node costs O(n). The exceptions:</p>
+      <table class="data-table">
+        <thead><tr><th>Position</th><th>Complexity</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Head</td><td class="o1">O(1)</td><td>Just move head = head.next</td></tr>
+          <tr><td>Tail (singly linked)</td><td class="on">O(n)</td><td>Must traverse to find prev node</td></tr>
+          <tr><td>Middle (given node)</td><td class="o1">O(1)</td><td>Pointer redirect only — but finding it is O(n)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mental-model">
+      <div class="mm-title">Mental Model — Linked List</div>
+      <ul>
+        <li><code>node</code> is an object. <code>node.val</code> is the value. <code>node.next</code> is another node — never mix these up in your head.</li>
+        <li><strong>Hold before you break</strong> — if reassigning a pointer you still need, save it first.</li>
+        <li>Always guard: <code>curr</code> before <code>curr.next</code>, and <code>curr.next</code> before <code>curr.next.next</code>.</li>
+        <li>Think from <strong>head and tail</strong> — not index. Access by index requires full traversal (O(n)).</li>
+        <li><code>tail.next</code> is always <code>None</code> — that's your termination signal.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================================ DOUBLY LINKED LIST -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Linear Data Structure</span>Doubly Linked List</h2>
+
+    <p>Each node now has two pointers: <code>prev</code> and <code>next</code> — pointing to the node before and after it. Traversal in both directions becomes trivial.</p>
+
+    <!-- DLL node visual -->
+    <svg class="inline-fig" viewBox="0 0 620 80" role="img">
+      <title>Doubly linked list nodes with prev and next pointers</title>
+      <defs>
+        <marker id="arwb3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arwp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#7c5cbf" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- node 1 -->
+      <rect x="10"  y="16" width="160" height="48" rx="6" fill="#f4f0fa" stroke="#7c5cbf" stroke-width="1.2"/>
+      <line x1="64"  y1="16" x2="64"  y2="64" stroke="#7c5cbf" stroke-width="0.6"/>
+      <line x1="114" y1="16" x2="114" y2="64" stroke="#7c5cbf" stroke-width="0.6"/>
+      <text x="37"  y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">prev</text>
+      <text x="37"  y="53" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#c0bab2">None</text>
+      <text x="89"  y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">val</text>
+      <text x="89"  y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="20" fill="#7c5cbf" font-weight="500">2</text>
+      <text x="138" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">next</text>
+      <text x="138" y="53" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#7c5cbf">→</text>
+      <!-- forward arrow -->
+      <line x1="172" y1="36" x2="226" y2="36" stroke="#2a5f8f" stroke-width="1" marker-end="url(#arwb3)"/>
+      <!-- back arrow -->
+      <line x1="226" y1="46" x2="172" y2="46" stroke="#7c5cbf" stroke-width="1" marker-end="url(#arwp)"/>
+      <!-- node 2 -->
+      <rect x="228" y="16" width="160" height="48" rx="6" fill="#f4f0fa" stroke="#7c5cbf" stroke-width="1.2"/>
+      <line x1="282" y1="16" x2="282" y2="64" stroke="#7c5cbf" stroke-width="0.6"/>
+      <line x1="332" y1="16" x2="332" y2="64" stroke="#7c5cbf" stroke-width="0.6"/>
+      <text x="255" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">prev</text>
+      <text x="255" y="53" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#7c5cbf">←</text>
+      <text x="307" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">val</text>
+      <text x="307" y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="20" fill="#7c5cbf" font-weight="500">5</text>
+      <text x="356" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">next</text>
+      <text x="356" y="53" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#7c5cbf">→</text>
+      <!-- forward arrow -->
+      <line x1="390" y1="36" x2="444" y2="36" stroke="#2a5f8f" stroke-width="1" marker-end="url(#arwb3)"/>
+      <line x1="444" y1="46" x2="390" y2="46" stroke="#7c5cbf" stroke-width="1" marker-end="url(#arwp)"/>
+      <!-- node 3 -->
+      <rect x="446" y="16" width="160" height="48" rx="6" fill="#f4f0fa" stroke="#7c5cbf" stroke-width="1.2"/>
+      <line x1="500" y1="16" x2="500" y2="64" stroke="#7c5cbf" stroke-width="0.6"/>
+      <line x1="550" y1="16" x2="550" y2="64" stroke="#7c5cbf" stroke-width="0.6"/>
+      <text x="473" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">prev</text>
+      <text x="473" y="53" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#7c5cbf">←</text>
+      <text x="525" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">val</text>
+      <text x="525" y="55" text-anchor="middle" font-family="DM Mono,monospace" font-size="20" fill="#7c5cbf" font-weight="500">7</text>
+      <text x="574" y="35" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">next</text>
+      <text x="574" y="53" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#c0bab2">None</text>
+    </svg>
+
+    <p>Same guard applies: check <code>curr</code> before <code>curr.prev</code>, just like you check before <code>curr.next</code>.</p>
+
+    <div class="subsection">
+      <h3 class="subsection-title">Operations — pointer update order matters</h3>
+
+      <p><strong style="font-weight:500">Append to tail:</strong></p>
+<pre>tail.next    = new_node      <span class="cm"># 1. connect forward</span>
+new_node.prev = tail         <span class="cm"># 2. connect backward</span>
+tail         = new_node      <span class="cm"># 3. advance tail</span>
+<span class="cm"># new_node.next is None by default ✓</span></pre>
+
+      <p><strong style="font-weight:500">Remove tail:</strong></p>
+<pre>prev_node        = tail.prev  <span class="cm"># 1. grab the node before tail</span>
+prev_node.next   = None       <span class="cm"># 2. sever forward link</span>
+tail             = prev_node  <span class="cm"># 3. move tail back</span></pre>
+
+      <p>Both are <code>O(1)</code> — which is exactly what a stack needs. So a doubly linked list is a valid stack implementation, but dynamic arrays are preferred because they also give O(1) random access.</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ COMPARISON TABLE -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Comparison</span>Array vs Linked List</h2>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Operation</th><th>Array</th><th>Linked List (singly)</th><th>DLL</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>Access i-th element</td>
+          <td><span class="o1">O(1)</span> <span class="winner win-arr">▲ array wins</span></td>
+          <td><span class="on">O(n)</span></td>
+          <td><span class="on">O(n)</span></td>
+        </tr>
+        <tr>
+          <td>Insert / remove at end</td>
+          <td><span class="o1a">O(1)*</span></td>
+          <td><span class="on">O(n)†</span></td>
+          <td><span class="o1">O(1)</span> <span class="winner win-ll">▲ DLL wins</span></td>
+        </tr>
+        <tr class="highlight-row">
+          <td>Insert / remove at head</td>
+          <td><span class="on">O(n)</span> <small style="color:var(--ink3)">(shift all)</small></td>
+          <td><span class="o1">O(1)</span> <span class="winner win-ll">▲ LL wins</span></td>
+          <td><span class="o1">O(1)</span> <span class="winner win-ll">▲ DLL wins</span></td>
+        </tr>
+        <tr>
+          <td>Insert / remove middle <small style="color:var(--ink3)">(given position)</small></td>
+          <td><span class="on">O(n)</span> <small style="color:var(--ink3)">(shift)</small></td>
+          <td><span class="on">O(n)‡</span> <span class="winner win-ll">▲ LL wins</span></td>
+          <td><span class="on">O(n)‡</span> <span class="winner win-ll">▲ LL wins</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:13px;color:var(--ink3);margin-top:6px;">* dynamic array, amortized &nbsp;† singly linked: O(n) to reach tail &nbsp;‡ pointer redirect is O(1) but traversal to reach middle is O(n). Array requires O(n) even with direct reference — due to shifting.</p>
+
+    <div class="callout callout-blue">
+      <strong>The real difference:</strong> for arrays the O(n) in middle insert/remove comes from <em>shifting elements</em>. For linked lists it comes from <em>traversal</em> to find the node. If you already have a reference to the node, linked list insert/remove is O(1). Arrays are O(n) regardless — you still have to shift.
+    </div>
+
+    <div class="mental-model">
+      <div class="mm-title">Array vs Linked List — mental model</div>
+      <ul>
+        <li>Arrays → think <strong>index</strong>. Random access is the superpower. Use when you need to jump around by position.</li>
+        <li>Linked lists → think <strong>head and tail</strong>. All operations radiate outward from the ends. Middle access is expensive.</li>
+        <li>In practice, arrays dominate interview problems because of O(1) index access. Linked lists appear when the problem is naturally pointer-based (merging, reversing, cycle detection).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================================ REVERSING A LINKED LIST -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Classic Problem</span>Reversing a Linked List</h2>
+
+    <p>Know this cold. First, the visual — see exactly which links break and reverse:</p>
+
+    <!-- Reversal visual -->
+    <svg class="inline-fig" viewBox="0 0 620 110" role="img">
+      <title>Reversing 2->1->5->7: all arrows flip direction</title>
+      <defs>
+        <marker id="arwfwd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arwrev" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#c84b2f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- Original: 2 -> 1 -> 5 -> 7 -->
+      <text x="10" y="16" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">before: head → 2 → 1 → 5 → 7 → None</text>
+      <rect x="10"  y="24" width="44" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+      <rect x="80"  y="24" width="44" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+      <rect x="150" y="24" width="44" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+      <rect x="220" y="24" width="44" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+      <text x="32"  y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a5f8f">2</text>
+      <text x="102" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a5f8f">1</text>
+      <text x="172" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a5f8f">5</text>
+      <text x="242" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a5f8f">7</text>
+      <line x1="56" y1="39" x2="78" y2="39" stroke="#2a5f8f" stroke-width="1" marker-end="url(#arwfwd)"/>
+      <line x1="126" y1="39" x2="148" y2="39" stroke="#2a5f8f" stroke-width="1" marker-end="url(#arwfwd)"/>
+      <line x1="196" y1="39" x2="218" y2="39" stroke="#2a5f8f" stroke-width="1" marker-end="url(#arwfwd)"/>
+      <!-- Reversed: 7 -> 5 -> 1 -> 2 -->
+      <text x="10" y="76" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">after:  head → 7 → 5 → 1 → 2 → None</text>
+      <rect x="10"  y="84" width="44" height="30" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1"/>
+      <rect x="80"  y="84" width="44" height="30" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1"/>
+      <rect x="150" y="84" width="44" height="30" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1"/>
+      <rect x="220" y="84" width="44" height="30" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1"/>
+      <text x="32"  y="104" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f">7</text>
+      <text x="102" y="104" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f">5</text>
+      <text x="172" y="104" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f">1</text>
+      <text x="242" y="104" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f">2</text>
+      <line x1="56" y1="99" x2="78" y2="99" stroke="#c84b2f" stroke-width="1" marker-end="url(#arwrev)"/>
+      <line x1="126" y1="99" x2="148" y2="99" stroke="#c84b2f" stroke-width="1" marker-end="url(#arwrev)"/>
+      <line x1="196" y1="99" x2="218" y2="99" stroke="#c84b2f" stroke-width="1" marker-end="url(#arwrev)"/>
+    </svg>
+
+    <div class="subsection">
+      <h3 class="subsection-title">Iterative — 3-pointer dance</h3>
+      <p>Keep three pointers: <code>prev</code>, <code>curr</code>, <code>next_node</code>. At each step, flip the arrow and advance all three.</p>
+<pre><span class="kw">def</span> <span class="fn">reverse_list</span>(head):
+    prev = <span class="kw">None</span>
+    curr = head
+
+    <span class="kw">while</span> curr:
+        next_node  = curr.next   <span class="cm"># 1. save next before breaking link</span>
+        curr.next  = prev        <span class="cm"># 2. reverse the arrow</span>
+        prev       = curr        <span class="cm"># 3. advance prev</span>
+        curr       = next_node   <span class="cm"># 4. advance curr</span>
+
+    <span class="kw">return</span> prev              <span class="cm"># prev is the new head</span></pre>
+
+      <!-- 3-pointer step visual -->
+      <svg class="inline-fig" viewBox="0 0 620 90" role="img">
+        <title>Iterative reversal: prev=None, curr=2, next_node=1 — flip curr.next to prev</title>
+        <defs>
+          <marker id="arwb4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+          <marker id="arwr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#c84b2f" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+          <marker id="arwg4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#2a7a4f" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+        </defs>
+        <text x="10" y="15" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">one iteration — pointers after the 4 steps</text>
+        <!-- None box -->
+        <rect x="10" y="24" width="56" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="38" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#8a8278">None</text>
+        <!-- node 2 -->
+        <rect x="100" y="24" width="44" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1.2"/>
+        <text x="122" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a5f8f">2</text>
+        <!-- node 1 -->
+        <rect x="180" y="24" width="44" height="30" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+        <text x="202" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a5f8f">1</text>
+        <!-- node 5+ -->
+        <rect x="260" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="282" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#8a8278">5…</text>
+        <!-- reversed arrow: 2 -> None -->
+        <line x1="98" y1="37" x2="68" y2="37" stroke="#c84b2f" stroke-width="1.5" marker-end="url(#arwr4)"/>
+        <!-- forward remaining -->
+        <line x1="146" y1="39" x2="178" y2="39" stroke="#c0bab2" stroke-width="1" marker-end="url(#arwb4)"/>
+        <line x1="226" y1="39" x2="258" y2="39" stroke="#c0bab2" stroke-width="1" marker-end="url(#arwb4)"/>
+        <!-- pointer labels -->
+        <text x="38"  y="70" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#c84b2f">prev</text>
+        <text x="122" y="70" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a5f8f">curr</text>
+        <text x="202" y="70" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">next_node</text>
+        <!-- annotation -->
+        <text x="122" y="85" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#8a8278">arrow flipped. now advance: prev←curr, curr←next_node</text>
+      </svg>
+    </div>
+
+    <div class="subsection">
+      <h3 class="subsection-title">Recursive — the crux</h3>
+      <p>The recursive insight: for any node <code>head</code>, assume the rest of the list is already reversed. All you need to do is make <code>head.next</code> point back at <code>head</code>:</p>
+
+      <div class="callout callout-blue">
+        <strong>Core of the recursion:</strong> <code>head.next.next = head</code> — make the node after me point back to me. Then set <code>head.next = None</code> to sever the original forward link. Repeat this going back up the call stack and the whole list reverses.
+      </div>
+
+<pre><span class="kw">def</span> <span class="fn">reverse_list</span>(head):
+    <span class="cm"># base case: empty or single node</span>
+    <span class="kw">if not</span> head <span class="kw">or not</span> head.next:
+        <span class="kw">return</span> head
+
+    new_head = <span class="fn">reverse_list</span>(head.next)   <span class="cm"># recurse to end; new_head = node 7</span>
+
+    head.next.next = head   <span class="cm"># the node after head now points BACK to head</span>
+    head.next      = <span class="kw">None</span>  <span class="cm"># sever head's original forward link</span>
+
+    <span class="kw">return</span> new_head         <span class="cm"># bubble the new head all the way up</span></pre>
+
+      <p>The call stack does the work — by the time recursion bottoms out at node 7 and starts returning, each frame executes <code>head.next.next = head</code> in reverse order, flipping all links.</p>
+    </div>
+
+    <div class="mental-model">
+      <div class="mm-title">Mental Model — Reversal</div>
+      <ul>
+        <li><strong>Iterative:</strong> you're physically walking the list and flipping each arrow as you go. Three pointers so you don't lose your place.</li>
+        <li><strong>Recursive:</strong> "assume everything after me is already reversed — now make my successor point back at me." The base case is a single node (already reversed).</li>
+        <li>Both approaches return the <strong>new head</strong> (the old tail).</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr>
+  <p style="font-size:12px;color:var(--ink3);text-align:center;">Notes · Chunk 2 — Stack · Singly Linked List · Doubly Linked List · Reversal</p>
+
+</div>
+</body>
+</html>

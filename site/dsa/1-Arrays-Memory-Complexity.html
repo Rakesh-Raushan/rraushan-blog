@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arrays · Memory · Complexity</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #fffefb;
+    --ink: #1a1816;
+    --ink2: #4a4540;
+    --ink3: #8a8278;
+    --accent: #c84b2f;
+    --accent2: #2a5f8f;
+    --accent3: #2a7a4f;
+    --border: rgba(26,24,22,0.1);
+    --border2: rgba(26,24,22,0.06);
+    --yellow: #f5e6a3;
+    --yellow-ink: #7a5c00;
+    --code-bg: #f0ede6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 15px;
+    font-weight: 300;
+  }
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+  }
+
+  /* Header */
+  .doc-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .doc-subtitle {
+    font-size: 14px;
+    color: var(--ink3);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+
+  /* Section titles */
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .section-title .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ink3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Body text */
+  p { margin-bottom: 14px; color: var(--ink2); }
+  p:last-child { margin-bottom: 0; }
+
+  /* Key insight callout */
+  .callout {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--ink2);
+  }
+  .callout strong { color: var(--ink); font-weight: 500; }
+
+  .callout-blue {
+    border-left-color: var(--accent2);
+  }
+  .callout-green {
+    border-left-color: var(--accent3);
+  }
+
+  /* Note highlight */
+  .note {
+    background: var(--yellow);
+    color: var(--yellow-ink);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  /* Code / mono */
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* Table */
+  .ops-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .ops-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    font-weight: 400;
+    text-align: left;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ops-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border2);
+    color: var(--ink2);
+  }
+  .ops-table tr:last-child td { border-bottom: none; }
+  .ops-table .o1 {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent3);
+    font-weight: 500;
+  }
+  .ops-table .on {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Amortized table */
+  .amort-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+  }
+  .amort-table th {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    font-weight: 400;
+    text-align: center;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .amort-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border2);
+    text-align: center;
+    color: var(--ink2);
+  }
+  .amort-table .resize-row td { color: var(--accent); }
+  .amort-table tr:last-child td { border-bottom: none; }
+
+  /* Inline figure row */
+  .fig-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin: 20px 0;
+  }
+  .fig-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    min-width: 56px;
+    padding-top: 2px;
+  }
+
+  /* RAM / Array visuals inline SVG wrapper */
+  svg.inline-fig {
+    display: block;
+    width: 100%;
+    max-width: 620px;
+    margin: 20px 0;
+  }
+
+  /* Complexity graph wrapper */
+  .graph-wrap {
+    margin: 20px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  /* Divider */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* Inline definition */
+  .def-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .def-term {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--ink3);
+    min-width: 90px;
+    padding-top: 1px;
+  }
+  .def-body { color: var(--ink2); }
+
+  /* Step list */
+  .steps { counter-reset: step; list-style: none; margin: 14px 0; }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 32px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--ink2);
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px; height: 20px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 50%;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  /* Non-O1 amortized contrast example */
+  .contrast-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .contrast-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+  .contrast-card .cc-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .contrast-card.good .cc-title { color: var(--accent3); }
+  .contrast-card.bad .cc-title { color: var(--accent); }
+
+  @media (max-width: 520px) {
+    .contrast-grid { grid-template-columns: 1fr; }
+    .page { padding: 32px 20px 64px; }
+    .doc-title { font-size: 32px; }
+  }
+</style>
+  <link rel="stylesheet" href="/assets/theme.css">
+</head>
+<body>
+<div class="page">
+
+  <h1 class="doc-title">Data Structures & Algorithms</h1>
+  <p class="doc-subtitle">Personal Notes — Arrays, Memory & Complexity</p>
+
+  <!-- ============================================================
+       SECTION 1: RAM
+  ============================================================ -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Foundation</span>Memory & RAM</h2>
+
+    <p>Data structures are fundamentally about how you arrange data in RAM — because RAM is limited and expensive, the way you structure data directly determines how efficiently you can use it.</p>
+
+    <div class="callout">
+      <strong>Why "Random Access"?</strong> Given any address in RAM, you can jump to it directly in constant time — no scanning from the beginning. That's the "random" part, and it's why RAM is fast.
+    </div>
+
+    <p>RAM is measured in <strong style="font-weight:500">bytes</strong>. A byte = 8 bits. A bit is a single position that holds either 0 or 1 — the language of computers.</p>
+
+    <!-- Memory hierarchy visual -->
+    <svg class="inline-fig" viewBox="0 0 620 72" role="img">
+      <title>Bit → Byte → RAM hierarchy</title>
+      <!-- 8 bit boxes -->
+      <g font-family="DM Mono, monospace" font-size="12">
+        <rect x="10" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="21" y="29" text-anchor="middle" fill="#4a4540">1</text>
+        <rect x="36" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="47" y="29" text-anchor="middle" fill="#4a4540">0</text>
+        <rect x="62" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="73" y="29" text-anchor="middle" fill="#4a4540">1</text>
+        <rect x="88" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="99" y="29" text-anchor="middle" fill="#4a4540">1</text>
+        <rect x="114" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="125" y="29" text-anchor="middle" fill="#4a4540">0</text>
+        <rect x="140" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="151" y="29" text-anchor="middle" fill="#4a4540">0</text>
+        <rect x="166" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="177" y="29" text-anchor="middle" fill="#4a4540">0</text>
+        <rect x="192" y="14" width="22" height="22" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="203" y="29" text-anchor="middle" fill="#4a4540">1</text>
+        <!-- brace label -->
+        <path d="M10 42 Q10 52 107 52 Q204 52 204 42" fill="none" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="107" y="66" text-anchor="middle" fill="#8a8278" font-size="11">1 byte = 8 bits</text>
+      </g>
+      <!-- arrow -->
+      <line x1="228" y1="25" x2="262" y2="25" stroke="#c0bab2" stroke-width="1" marker-end="url(#arw)"/>
+      <defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#8a8278" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+      <!-- RAM block -->
+      <rect x="268" y="6" width="110" height="40" rx="5" fill="#fff8f0" stroke="#c84b2f" stroke-width="0.8"/>
+      <text x="323" y="21" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">ADDR 0x00A4</text>
+      <text x="323" y="37" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#c84b2f" font-weight="500">00110001</text>
+      <!-- arrow -->
+      <line x1="384" y1="25" x2="418" y2="25" stroke="#c0bab2" stroke-width="1" marker-end="url(#arw)"/>
+      <!-- many bytes = RAM -->
+      <rect x="424" y="4" width="180" height="44" rx="5" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <text x="514" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#4a4540">RAM (many bytes)</text>
+    </svg>
+
+    <p>In summary: <strong style="font-weight:500">bits → bytes → RAM</strong>.</p>
+  </div>
+
+  <!-- ============================================================
+       SECTION 2: RAM & Arrays
+  ============================================================ -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Core Concept</span>Arrays in RAM</h2>
+
+    <p>The most important property of arrays: <strong style="font-weight:500">elements are stored as a contiguous block in RAM</strong>. This one fact drives everything about array performance.</p>
+
+    <!-- Array in RAM visual -->
+    <svg class="inline-fig" viewBox="0 0 620 130" role="img">
+      <title>Array [1, 3, 5] laid out contiguously in RAM</title>
+      <defs>
+        <marker id="arw2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#8a8278" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- address labels -->
+      <text x="60"  y="20" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">0x00A0</text>
+      <text x="180" y="20" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">0x00A4</text>
+      <text x="300" y="20" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">0x00A8</text>
+      <!-- cells -->
+      <rect x="10"  y="28" width="100" height="48" rx="5" fill="#fff8f0" stroke="#c84b2f" stroke-width="1.2"/>
+      <rect x="130" y="28" width="100" height="48" rx="5" fill="#fff8f0" stroke="#c84b2f" stroke-width="1.2"/>
+      <rect x="250" y="28" width="100" height="48" rx="5" fill="#fff8f0" stroke="#c84b2f" stroke-width="1.2"/>
+      <!-- values -->
+      <text x="60"  y="58" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" fill="#c84b2f" font-weight="500">1</text>
+      <text x="180" y="58" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" fill="#c84b2f" font-weight="500">3</text>
+      <text x="300" y="58" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" fill="#c84b2f" font-weight="500">5</text>
+      <!-- byte labels -->
+      <text x="60"  y="87" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">4 bytes (int)</text>
+      <text x="180" y="87" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">4 bytes (int)</text>
+      <text x="300" y="87" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">4 bytes (int)</text>
+      <!-- brace annotation for address arithmetic -->
+      <path d="M10 98 Q10 110 180 110 Q350 110 350 98" fill="none" stroke="#c0bab2" stroke-width="0.8"/>
+      <text x="180" y="124" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#8a8278">addr(arr[i]) = start + 4 × i</text>
+      <!-- char array -->
+      <rect x="400" y="28" width="36" height="48" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+      <rect x="440" y="28" width="36" height="48" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+      <rect x="480" y="28" width="36" height="48" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+      <text x="418" y="57" text-anchor="middle" font-family="DM Mono,monospace" font-size="18" fill="#2a7a4f" font-weight="500">a</text>
+      <text x="458" y="57" text-anchor="middle" font-family="DM Mono,monospace" font-size="18" fill="#2a7a4f" font-weight="500">l</text>
+      <text x="498" y="57" text-anchor="middle" font-family="DM Mono,monospace" font-size="18" fill="#2a7a4f" font-weight="500">k</text>
+      <text x="455" y="87" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#8a8278">chars: 1 byte each (ASCII)</text>
+    </svg>
+
+    <p>Because of contiguous storage, you can jump to any element by arithmetic alone — no scanning needed:</p>
+    <div class="callout callout-blue">
+      <code>address of arr[i] = start_address + bytes_per_element × i</code>
+      <br><br>For <code>int</code> arrays: <code>+4</code> per step. For <code>char</code> arrays: <code>+1</code> per step (ASCII = 1 byte).
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 3: Static Arrays — Operations
+  ============================================================ -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Data Structure</span>Static Arrays</h2>
+
+    <div class="def-row"><span class="def-term">Read</span><span class="def-body"><code>O(1)</code> — address arithmetic gives you any element directly.</span></div>
+    <div class="def-row"><span class="def-term">Write (end)</span><span class="def-body"><code>O(1)</code> — same logic, you know where the end is.</span></div>
+    <div class="def-row"><span class="def-term">Delete</span><span class="def-body"><code>O(n)</code> worst case — deleting from the middle breaks contiguity, so you must shift up to n-1 elements to close the gap.</span></div>
+    <div class="def-row" style="margin-top:4px"><span class="def-term">Insert</span><span class="def-body"><code>O(n)</code> worst case — inserting in the middle requires shifting elements to make room. Insert at end is <code>O(1)</code>.</span></div>
+
+    <div class="callout">
+      <strong>Python note:</strong> when you delete an element, Python removes the reference and marks it for garbage collection. The element doesn't vanish instantly — the GC handles cleanup later.
+    </div>
+
+    <table class="ops-table">
+      <thead>
+        <tr><th>Operation</th><th>Complexity</th><th>Reason</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Read / Write</td><td class="o1">O(1)</td><td>Direct address arithmetic</td></tr>
+        <tr><td>Insert / Remove at end</td><td class="o1">O(1)</td><td>No shifting needed</td></tr>
+        <tr><td>Insert / Remove at position i</td><td class="on">O(n)</td><td>Must shift up to n−1 elements</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Shift visual -->
+    <svg class="inline-fig" viewBox="0 0 620 110" role="img">
+      <title>Deleting element from middle of array requires shifting subsequent elements</title>
+      <defs>
+        <marker id="arw3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#c84b2f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arwg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2a7a4f" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- label -->
+      <text x="10" y="18" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">delete arr[1] (value=3)</text>
+      <!-- before: [1, 3, 5, 7] -->
+      <rect x="10"  y="26" width="60" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <rect x="74"  y="26" width="60" height="38" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1.2"/>
+      <rect x="138" y="26" width="60" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <rect x="202" y="26" width="60" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <text x="40"  y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#4a4540">1</text>
+      <text x="104" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#c84b2f" font-weight="500">3</text>
+      <text x="168" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#4a4540">5</text>
+      <text x="232" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#4a4540">7</text>
+      <!-- arrows showing shift -->
+      <line x1="170" y1="72" x2="108" y2="72" stroke="#2a7a4f" stroke-width="1.2" marker-end="url(#arwg)"/>
+      <line x1="234" y1="80" x2="112" y2="80" stroke="#2a7a4f" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arwg)"/>
+      <text x="200" y="98" font-family="DM Sans,monospace" font-size="11" fill="#8a8278">elements shift left →  O(n) copies</text>
+      <!-- after -->
+      <rect x="330" y="26" width="60" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <rect x="394" y="26" width="60" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <rect x="458" y="26" width="60" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8"/>
+      <rect x="522" y="26" width="60" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.4"/>
+      <text x="360" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#4a4540">1</text>
+      <text x="424" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#4a4540">5</text>
+      <text x="488" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="16" fill="#4a4540">7</text>
+      <text x="552" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#c0bab2">—</text>
+      <text x="440" y="98" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">result after delete</text>
+    </svg>
+  </div>
+
+  <!-- ============================================================
+       SECTION 4: Dynamic Arrays
+  ============================================================ -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Data Structure</span>Dynamic Arrays</h2>
+
+    <p>Python lists, JS arrays, Java's <code>ArrayList</code>, C++'s <code>vector</code> — all dynamic arrays. They solve the fixed-size problem of static arrays.</p>
+
+    <p>The trick is a second pointer marking the end of used space. When <em>start reaches end</em> (array is full), it resizes:</p>
+
+    <ol class="steps">
+      <li>Allocate a bigger block of memory</li>
+      <li>Copy all elements to the new block</li>
+      <li>Release the old block</li>
+    </ol>
+
+    <div class="callout callout-blue">
+      <strong>How much bigger?</strong> Double the current size. Too small → frequent resizes. Too big → wasted memory. Doubling is the sweet spot — and the reason is Amortized O(1), explained below.
+    </div>
+
+    <!-- Resize visual -->
+    <svg class="inline-fig" viewBox="0 0 620 100" role="img">
+      <title>Dynamic array doubling its capacity on resize</title>
+      <!-- old array: capacity 4, full -->
+      <text x="10" y="18" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">capacity=4 (full)</text>
+      <rect x="10"  y="26" width="50" height="38" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="1"/>
+      <rect x="64"  y="26" width="50" height="38" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="1"/>
+      <rect x="118" y="26" width="50" height="38" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="1"/>
+      <rect x="172" y="26" width="50" height="38" rx="4" fill="#fff8f0" stroke="#c84b2f" stroke-width="1"/>
+      <text x="35"  y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#c84b2f">1</text>
+      <text x="89"  y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#c84b2f">3</text>
+      <text x="143" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#c84b2f">5</text>
+      <text x="197" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#c84b2f">7</text>
+      <!-- arrow -->
+      <text x="250" y="42" font-family="DM Sans,sans-serif" font-size="20" fill="#c0bab2">→</text>
+      <text x="244" y="58" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">resize</text>
+      <!-- new array: capacity 8 -->
+      <text x="280" y="18" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">capacity=8 (doubled)</text>
+      <rect x="280" y="26" width="42" height="38" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+      <rect x="326" y="26" width="42" height="38" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+      <rect x="372" y="26" width="42" height="38" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+      <rect x="418" y="26" width="42" height="38" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+      <rect x="464" y="26" width="42" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8" stroke-dasharray="4 3"/>
+      <rect x="510" y="26" width="42" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8" stroke-dasharray="4 3"/>
+      <rect x="556" y="26" width="28" height="38" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width="0.8" stroke-dasharray="4 3"/>
+      <text x="301" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">1</text>
+      <text x="347" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">3</text>
+      <text x="393" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">5</text>
+      <text x="439" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">7</text>
+      <text x="485" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#c0bab2">_</text>
+      <text x="531" y="51" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#c0bab2">_</text>
+      <text x="430" y="84" font-family="DM Sans,sans-serif" font-size="12" fill="#2a7a4f">4 slots free — room to grow</text>
+    </svg>
+
+    <h3 style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;margin:28px 0 12px;">Amortized O(1) — the key insight</h3>
+
+    <p>The cost of each append isn't constant — some appends trigger a copy. But averaged over many appends, it works out to O(1). This is called <strong style="font-weight:500">amortized complexity</strong>.</p>
+
+    <p>Watch the doubling sequence. Red rows = resize happened (copies + insert). White rows = just insert.</p>
+
+    <table class="amort-table">
+      <thead>
+        <tr><th>Element #</th><th>Capacity</th><th>Copies on resize</th><th>Ops this step</th><th>Total ops so far</th><th>Avg (total ÷ n)</th></tr>
+      </thead>
+      <tbody>
+        <tr class="resize-row"><td>1</td><td>1→2</td><td>0</td><td>1</td><td>1</td><td>1.00</td></tr>
+        <tr class="resize-row"><td>2</td><td>2→4</td><td>1</td><td>2</td><td>3</td><td>1.50</td></tr>
+        <tr class="resize-row"><td>3</td><td>—</td><td>2</td><td>3</td><td>6</td><td>2.00</td></tr>
+        <tr><td>4</td><td>—</td><td>0</td><td>1</td><td>7</td><td>1.75</td></tr>
+        <tr class="resize-row"><td>5</td><td>4→8</td><td>4</td><td>5</td><td>12</td><td>2.40</td></tr>
+        <tr><td>6</td><td>—</td><td>0</td><td>1</td><td>13</td><td>2.17</td></tr>
+        <tr><td>7</td><td>—</td><td>0</td><td>1</td><td>14</td><td>2.00</td></tr>
+        <tr><td>8</td><td>—</td><td>0</td><td>1</td><td>15</td><td>1.88</td></tr>
+        <tr class="resize-row"><td>9</td><td>8→16</td><td>8</td><td>9</td><td>24</td><td>2.67</td></tr>
+        <tr><td>16</td><td>—</td><td>0</td><td>1</td><td>31</td><td>1.94</td></tr>
+        <tr class="resize-row"><td>17</td><td>16→32</td><td>16</td><td>17</td><td>48</td><td>2.82</td></tr>
+        <tr><td>32</td><td>—</td><td>0</td><td>1</td><td>63</td><td>1.97</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-green">
+      <strong>Why it stays bounded:</strong> by the time you reach size n, the total copies made = n/2 + n/4 + n/8 + … ≤ n. So total ops ≤ 2n, meaning average = 2n/n = <strong>O(1) amortized</strong>. The expensive resize events are rare enough that they don't drag the average up.
+    </div>
+
+    <div class="contrast-grid">
+      <div class="contrast-card good">
+        <div class="cc-title">Doubling → O(1) amortized</div>
+        <p style="font-size:13px;color:var(--ink2);margin:0">Each resize doubles size → copies halve in frequency. Geometric series sums to O(n) total, O(1) per append average.</p>
+      </div>
+      <div class="contrast-card bad">
+        <div class="cc-title">+1 growth → O(n) amortized</div>
+        <p style="font-size:13px;color:var(--ink2);margin:0">If you only grew by 1 each time, you'd copy on every single append. n appends → n copies on step n → O(n) copies → O(n²) total → O(n) per append. Bad.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 5: Time Complexity
+  ============================================================ -->
+  <div class="section">
+    <h2 class="section-title"><span class="tag">Fundamentals</span>Time Complexity</h2>
+
+    <p>Complexity is about <strong style="font-weight:500">rate of growth</strong>, not exact time. We care about behaviour as n gets large — because that's where differences become real.</p>
+
+    <div class="callout">
+      <strong>The question to ask:</strong> if I plot two functions, will one eventually overtake the other as n → ∞? If yes, the one that grows faster has worse complexity, regardless of constants or intercepts.
+    </div>
+
+    <!-- Complexity curves -->
+    <div class="graph-wrap">
+      <svg viewBox="0 0 580 260" width="100%" role="img">
+        <title>Growth rate comparison: O(1), O(log n), O(n), O(n²)</title>
+        <!-- axes -->
+        <line x1="40" y1="220" x2="560" y2="220" stroke="#c0bab2" stroke-width="0.8"/>
+        <line x1="40" y1="20"  x2="40"  y2="220" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="300" y="248" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#8a8278">n (input size)</text>
+        <text x="14" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#8a8278" transform="rotate(-90,14,120)">time</text>
+        <!-- O(1) -->
+        <path d="M40 200 L540 200" fill="none" stroke="#2a7a4f" stroke-width="1.8"/>
+        <text x="544" y="204" font-family="DM Mono,monospace" font-size="11" fill="#2a7a4f">O(1)</text>
+        <!-- O(log n) -->
+        <path d="M40 200 C100 160, 200 145, 540 130" fill="none" stroke="#2a5f8f" stroke-width="1.8"/>
+        <text x="544" y="134" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">O(log n)</text>
+        <!-- O(n) -->
+        <path d="M40 200 L540 80" fill="none" stroke="#8a8278" stroke-width="1.8"/>
+        <text x="544" y="80" font-family="DM Mono,monospace" font-size="11" fill="#8a8278">O(n)</text>
+        <!-- O(3n) — same slope different intercept, illustrating constant ignored -->
+        <path d="M40 200 L540 40" fill="none" stroke="#c0bab2" stroke-width="1.2" stroke-dasharray="5 4"/>
+        <text x="544" y="44" font-family="DM Mono,monospace" font-size="11" fill="#c0bab2">O(3n)</text>
+        <!-- O(n²) -->
+        <path d="M40 218 C120 215, 250 180, 380 80" fill="none" stroke="#c84b2f" stroke-width="1.8"/>
+        <text x="386" y="74" font-family="DM Mono,monospace" font-size="11" fill="#c84b2f">O(n²)</text>
+        <!-- annotation: O(n) vs O(3n) -->
+        <line x1="200" y1="150" x2="200" y2="165" stroke="#c0bab2" stroke-width="0.8"/>
+        <text x="200" y="178" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#8a8278">O(n) ≡ O(3n): same slope class</text>
+      </svg>
+    </div>
+
+    <p>This is why we <strong style="font-weight:500">ignore constants</strong>: <code>O(3n)</code> and <code>O(n)</code> are parallel lines — one is just shifted. They both grow linearly, and neither will ever catch the quadratic <code>O(n²)</code>. The class of growth is what matters.</p>
+
+    <p>Same logic for ignoring additive constants like <code>O(n + 5)</code> — two lines with different intercepts still diverge at the same rate. At large n, the <code>+5</code> is noise.</p>
+
+    <div class="callout callout-blue">
+      <strong>Rule of thumb:</strong> we suppress constants and low-order terms because for any two functions with different growth classes, there always exists some n beyond which the faster-growing one dominates — it's <em>certain</em>, just a matter of when.
+    </div>
+  </div>
+
+  <hr>
+  <p style="font-size:12px;color:var(--ink3);text-align:center;">Notes · Chunk 1 — RAM, Static Arrays, Dynamic Arrays, Time Complexity</p>
+
+</div>
+</body>
+</html>

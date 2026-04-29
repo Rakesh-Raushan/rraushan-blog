@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary Search</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f7f5f0; --surface:#fffefb;
+    --ink:#1a1816; --ink2:#4a4540; --ink3:#8a8278;
+    --accent:#c84b2f; --accent2:#2a5f8f; --accent3:#2a7a4f;
+    --border:rgba(26,24,22,0.1); --border2:rgba(26,24,22,0.06);
+    --code-bg:#f0ede6;
+    --mental-bg:#f0edf8; --mental-border:#7c5cbf; --mental-ink:#3a2060;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);line-height:1.8;font-size:15px;font-weight:300;}
+  .page{max-width:780px;margin:0 auto;padding:56px 32px 96px;}
+
+  .doc-title{font-family:'Instrument Serif',serif;font-size:42px;font-weight:400;letter-spacing:-.5px;margin-bottom:6px;}
+  .doc-subtitle{font-size:14px;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:48px;}
+
+  .section{margin-bottom:60px;}
+  .section-title{font-family:'Instrument Serif',serif;font-size:26px;font-weight:400;margin-bottom:20px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
+  .section-title .tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px;}
+  .sub{margin-top:28px;}
+  .sub-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:20px;font-weight:400;margin-bottom:12px;}
+
+  p{margin-bottom:14px;color:var(--ink2);}
+  p:last-child{margin-bottom:0;}
+  strong.hi{font-weight:500;color:var(--ink);}
+
+  .callout{background:var(--surface);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:14px 18px;margin:20px 0;font-size:14px;color:var(--ink2);}
+  .callout strong{color:var(--ink);font-weight:500;}
+  .callout-blue{border-left-color:var(--accent2);}
+  .callout-green{border-left-color:var(--accent3);}
+
+  .mental-model{background:var(--mental-bg);border:1px solid rgba(124,92,191,.25);border-left:3px solid var(--mental-border);border-radius:0 8px 8px 0;padding:16px 20px;margin:24px 0;}
+  .mental-model .mm-title{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mental-border);margin-bottom:10px;}
+  .mental-model ul{list-style:none;padding:0;}
+  .mental-model ul li{position:relative;padding-left:20px;font-size:14px;color:var(--mental-ink);margin-bottom:7px;line-height:1.65;}
+  .mental-model ul li::before{content:'◆';position:absolute;left:0;top:2px;font-size:8px;color:var(--mental-border);}
+  .mental-model ul li:last-child{margin-bottom:0;}
+
+  code{font-family:'DM Mono',monospace;font-size:13px;background:var(--code-bg);padding:1px 5px;border-radius:3px;color:var(--accent);}
+  pre{font-family:'DM Mono',monospace;font-size:13px;background:#1e1c1a;color:#d4cfc8;border-radius:8px;padding:20px 22px;line-height:1.65;overflow-x:auto;margin:16px 0;}
+  pre .kw{color:#c084fc;} pre .fn{color:#60d4a8;} pre .st{color:#f5c068;}
+  pre .cm{color:#6a6560;font-style:italic;} pre .num{color:#7ec8e3;} pre .cl{color:#fbbf24;}
+  pre .hi{color:#fbbf24;font-weight:500;}
+
+  svg.fig{display:block;width:100%;margin:20px 0;}
+
+  /* monotonic number line */
+  .mono-strip{display:flex;gap:0;margin:20px 0;border-radius:6px;overflow:hidden;font-family:'DM Mono',monospace;font-size:13px;}
+  .ms-false{background:#fee8e8;color:#7a1a1a;padding:10px 16px;flex:1;text-align:center;font-weight:500;}
+  .ms-true{background:#e8f4ec;color:#1a5c32;padding:10px 16px;flex:1;text-align:center;font-weight:500;}
+  .ms-q{background:#f0ede6;color:#4a4540;padding:10px 16px;flex:1;text-align:center;}
+
+  /* problems grid */
+  .prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+  .prob-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
+  .prob-card .pc-q{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:5px;}
+  .prob-card .pc-cond{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent2);background:var(--code-bg);padding:3px 8px;border-radius:3px;margin-bottom:6px;display:inline-block;}
+  .prob-card .pc-note{font-size:12px;color:var(--ink3);line-height:1.5;}
+
+  /* invariant box */
+  .invariant-box{background:#1e1c1a;color:#d4cfc8;border-radius:8px;padding:22px 24px;margin:20px 0;}
+  .inv-row{display:flex;align-items:center;gap:16px;margin-bottom:10px;font-family:'DM Mono',monospace;font-size:13px;}
+  .inv-row:last-child{margin-bottom:0;}
+  .inv-label{min-width:160px;color:#6a6560;font-style:italic;font-size:12px;}
+  .inv-false{color:#f87171;font-weight:500;}
+  .inv-true{color:#60d4a8;font-weight:500;}
+  .inv-range{color:#fbbf24;font-weight:500;}
+
+  /* pitfalls table */
+  .pt-table{width:100%;border-collapse:collapse;font-size:14px;margin:16px 0;}
+  .pt-table th{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);font-weight:400;padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;}
+  .pt-table td{padding:10px 12px;border-bottom:1px solid var(--border2);color:var(--ink2);vertical-align:top;}
+  .pt-table tr:last-child td{border-bottom:none;}
+  .bad{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);}
+  .fix{font-family:'DM Mono',monospace;font-size:12px;color:var(--accent3);}
+
+  hr{border:none;border-top:1px solid var(--border);margin:40px 0;}
+  @media(max-width:520px){.prob-grid{grid-template-columns:1fr;}.page{padding:32px 18px 64px;}.doc-title{font-size:30px;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1 class="doc-title">Binary Search</h1>
+<p class="doc-subtitle">From first principles — the boundary, not the match</p>
+
+<!-- ══════════════════════════ REAL IDEA ══════════════════════════ -->
+<div class="section">
+<h2 class="section-title"><span class="tag">Core Insight</span>What binary search actually is</h2>
+
+<p>The dictionary analogy captures it: you open to a random page, see words starting with "J", and instantly discard the right half. You didn't find the word — you found a <strong class="hi">boundary</strong>. Everything to the right is too far; search left. That's the entire idea.</p>
+
+<p>The textbook framing — "find if a number exists in a sorted array" — is a special case that hides the real power. Reframe it from scratch:</p>
+
+<div class="callout">
+  <strong>The real question binary search answers:</strong><br><br>
+  Given a condition that, over a range of candidates, produces answers that go <span style="color:var(--accent);font-weight:500">False False False …</span> then flip to <span style="color:var(--accent3);font-weight:500">True True True …</span> — find the <strong>exact position of that flip</strong> in O(log n).
+</div>
+
+<p>That's it. Binary search is a <strong class="hi">boundary finder on a monotonic condition</strong>, not an element finder.</p>
+
+<!-- monotonic strip visual -->
+<svg class="fig" viewBox="0 0 680 90" role="img">
+  <title>Monotonic condition: False region then True region, binary search finds the boundary</title>
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#1a1816" stroke-width="1.5" stroke-linecap="round"/>
+    </marker>
+  </defs>
+  <!-- false region -->
+  <rect x="10" y="24" width="260" height="36" rx="0" fill="#fee8e8"/>
+  <rect x="10" y="24" width="260" height="36" rx="5" fill="#fee8e8" stroke="rgba(200,75,47,.3)" stroke-width=".8"/>
+  <text x="140" y="47" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#c84b2f" font-weight="500">F F F F F F F F F</text>
+  <!-- true region -->
+  <rect x="272" y="24" width="400" height="36" rx="5" fill="#e8f4ec" stroke="rgba(42,122,79,.3)" stroke-width=".8"/>
+  <text x="472" y="47" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a7a4f" font-weight="500">T T T T T T T T T T T</text>
+  <!-- boundary arrow -->
+  <line x1="270" y1="8" x2="270" y2="22" stroke="#1a1816" stroke-width="1.5" marker-end="url(#ab)"/>
+  <text x="270" y="7" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#1a1816">boundary ← binary search finds this</text>
+  <!-- axis labels -->
+  <text x="10"  y="74" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">L (search start)</text>
+  <text x="610" y="74" font-family="DM Mono,monospace" font-size="10" fill="#8a8278" text-anchor="end">R (search end)</text>
+</svg>
+
+<p>Every binary search problem you'll encounter is really asking: where in this sorted-by-condition range does the answer first become True? The moment you see it this way, the "exact element search" version stops being a special case you memorise — it's just one instance of the same template.</p>
+
+<div class="callout callout-blue">
+  <strong>Why even exact match uses boundaries, not equality:</strong> when you search for target in a sorted array, you don't check <code>arr[mid] == target</code> to eliminate half. You check <code>arr[mid] &lt; target</code> — that's a boundary condition. You're finding the first position where <code>arr[i] >= target</code> and then checking if that position holds the target. The equality is a verification step <em>after</em> binary search, not the search itself.
+</div>
+</div>
+
+<!-- ══════════════════════════ INVARIANT ══════════════════════════ -->
+<div class="section">
+<h2 class="section-title"><span class="tag">The Foundation</span>The invariant — what is always true</h2>
+
+<p>Forget ad-hoc boundary decisions (<em>is it <code>mid-1</code> or <code>mid</code>? is it <code>&lt;</code> or <code>&lt;=</code>?</em>). Instead, maintain one invariant at every step and the code writes itself.</p>
+
+<div class="invariant-box">
+  <div class="inv-row">
+    <span class="inv-label">everything left of L</span>
+    <span class="inv-false">→ definitely False</span>
+  </div>
+  <div class="inv-row">
+    <span class="inv-label">everything at R and right</span>
+    <span class="inv-true">→ definitely True</span>
+  </div>
+  <div class="inv-row">
+    <span class="inv-label">answer lives in</span>
+    <span class="inv-range">[L, R)  — shrinks every iteration</span>
+  </div>
+</div>
+
+<p>At the very start: nothing is left of L (trivially False, nothing to violate it). Nothing is fixed as True yet, but R is set just past the range — we're saying "the answer exists somewhere in [L, R)."</p>
+<p>At termination: <code>L == R</code>, the range collapsed to a single point. That point is the answer.</p>
+
+<!-- invariant visual over array -->
+<svg class="fig" viewBox="0 0 680 140" role="img">
+  <title>Invariant in action: L, mid, R over array, shrinking each step</title>
+  <defs>
+    <marker id="ald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.4" stroke-linecap="round"/>
+    </marker>
+  </defs>
+
+  <!-- step 1 array -->
+  <text x="10" y="16" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">searching: first i where nums[i] >= 7  in [1,3,5,7,9,11]</text>
+  <!-- cells -->
+  <rect x="10"  y="24" width="52" height="34" rx="4" fill="#fee8e8" stroke="rgba(200,75,47,.4)" stroke-width=".8"/>
+  <rect x="66"  y="24" width="52" height="34" rx="4" fill="#fee8e8" stroke="rgba(200,75,47,.4)" stroke-width=".8"/>
+  <rect x="122" y="24" width="52" height="34" rx="4" fill="#fee8e8" stroke="rgba(200,75,47,.4)" stroke-width=".8"/>
+  <rect x="178" y="24" width="52" height="34" rx="4" fill="#e8f4ec" stroke="rgba(42,122,79,.5)" stroke-width=".8"/>
+  <rect x="234" y="24" width="52" height="34" rx="4" fill="#e8f4ec" stroke="rgba(42,122,79,.5)" stroke-width=".8"/>
+  <rect x="290" y="24" width="52" height="34" rx="4" fill="#e8f4ec" stroke="rgba(42,122,79,.5)" stroke-width=".8"/>
+  <text x="36"  y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f">1</text>
+  <text x="92"  y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f">3</text>
+  <text x="148" y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f">5</text>
+  <text x="204" y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">7</text>
+  <text x="260" y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">9</text>
+  <text x="316" y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">11</text>
+  <!-- pointer labels -->
+  <text x="36"  y="70" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a5f8f">L=0</text>
+  <text x="148" y="70" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">mid=2</text>
+  <text x="342" y="70" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#c84b2f">R=6</text>
+  <!-- decision text -->
+  <text x="10" y="88" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">f(mid=2): nums[2]=5 &lt; 7  →  False  →  left = mid+1 = 3</text>
+
+  <!-- step 2 -->
+  <text x="10" y="104" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">next:  L=3, R=6,  mid=4</text>
+  <rect x="178" y="108" width="52" height="26" rx="4" fill="#f5f0ff" stroke="#7c5cbf" stroke-width="1.4"/>
+  <rect x="234" y="108" width="52" height="26" rx="4" fill="#f5f0ff" stroke="#7c5cbf" stroke-width=".6"/>
+  <rect x="290" y="108" width="52" height="26" rx="4" fill="#f5f0ff" stroke="#7c5cbf" stroke-width=".6"/>
+  <text x="204" y="125" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#7c5cbf">7</text>
+  <text x="260" y="125" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#7c5cbf">9</text>
+  <text x="316" y="125" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#7c5cbf">11</text>
+  <text x="204" y="140" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a5f8f">L=3</text>
+  <text x="260" y="140" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">mid=4</text>
+  <text x="420" y="118" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">f(mid=4): nums[4]=9 &gt;=7 → True → right=mid=4</text>
+  <text x="420" y="132" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">next: L=3, R=4, mid=3 → f(True) → R=3. L==R=3. Done. ✓</text>
+</svg>
+
+<div class="sub">
+<h3 class="sub-title">The single template</h3>
+<p>One template. Works for every binary search problem. No special-casing.</p>
+
+<pre><span class="kw">def</span> <span class="fn">binary_search</span>(L, R):
+    <span class="cm"># invariant: everything &lt; L is False, everything &gt;= R is True</span>
+    <span class="kw">while</span> left < right:
+        mid = left + (right - left) // <span class="num">2</span>   <span class="cm"># avoids int overflow (matters in Java/C++)</span>
+        <span class="kw">if</span> <span class="fn">f</span>(mid):
+            right = mid        <span class="cm"># mid could be the answer — keep it</span>
+        <span class="kw">else</span>:
+            left = mid + <span class="num">1</span>    <span class="cm"># mid is False — safe to discard it</span>
+    <span class="kw">return</span> left               <span class="cm"># L == R, the boundary</span></pre>
+
+<div class="callout">
+  <strong>This loop never exits early.</strong> Unlike the textbook <code>while left &lt;= right</code> version that returns immediately on <code>arr[mid] == target</code>, this template runs until <code>L == R</code> — always. Even when it hits a True mid-way through, it doesn't stop; it just tightens R and keeps going. The loop's job is to collapse the search space to one point, not to find a match. The answer is read at the end, not during. This is the fundamental difference from the special-case version you'll see everywhere — and the reason this template generalises while the other doesn't.
+</div>
+
+<div class="callout callout-blue">
+  <strong>Why <code>right = mid</code> not <code>right = mid - 1</code>:</strong> when <code>f(mid)</code> is True, mid <em>might be</em> the answer — we can't discard it. We only tighten R to mid. When <code>f(mid)</code> is False, mid is definitively not the answer — so we can safely move left to <code>mid + 1</code>, discarding mid.
+</div>
+
+<div class="callout">
+  <strong>Why <code>mid = left + (right - left) // 2</code>:</strong> mathematically identical to <code>(left + right) // 2</code> but avoids integer overflow when left and right are large. Habit to build now — matters in Java/C++.
+</div>
+</div>
+</div>
+
+<!-- ══════════════════════════ EXACT MATCH REFRAMED ══════════════════════════ -->
+<div class="section">
+<h2 class="section-title"><span class="tag">Reframing the Classic</span>Exact match is just a special case</h2>
+
+<p>The standard "find target in sorted array" is just this template with <code>f(i) = (nums[i] >= target)</code>. Run the template — it finds the first index where <code>nums[i] >= target</code>. Then check: does that index hold exactly target?</p>
+
+<pre><span class="kw">def</span> <span class="fn">search</span>(nums, target):
+    left, right = <span class="num">0</span>, len(nums)          <span class="cm"># R = len (one past end)</span>
+
+    <span class="kw">while</span> left < right:
+        mid = left + (right - left) // <span class="num">2</span>
+        <span class="kw">if</span> nums[mid] >= target:            <span class="cm"># f(mid): is this >= target?</span>
+            right = mid
+        <span class="kw">else</span>:
+            left = mid + <span class="num">1</span>
+
+    <span class="cm"># left == right: first index where nums[i] >= target</span>
+    <span class="kw">return</span> left <span class="kw">if</span> left < len(nums) <span class="kw">and</span> nums[left] == target <span class="kw">else</span> -<span class="num">1</span></pre>
+
+<p>Notice: there's no <code>arr[mid] == target</code> branch anywhere during the search. The equality check only happens at the end. You searched for a boundary, landed on it, then verified. That's the correct mental model.</p>
+</div>
+
+<!-- ══════════════════════════ PROBLEM TYPES ══════════════════════════ -->
+<div class="section">
+<h2 class="section-title"><span class="tag">Same Template, Many Problems</span>What the condition f(x) looks like</h2>
+
+<p>Every problem below uses the exact same template. The only thing that changes is what <code>f(mid)</code> checks.</p>
+
+<div class="prob-grid">
+  <div class="prob-card">
+    <div class="pc-q">First element ≥ target</div>
+    <div class="pc-cond">f(i) = nums[i] >= target</div>
+    <div class="pc-note">Classic lower_bound. Boundary is where the array first reaches or exceeds target.</div>
+  </div>
+  <div class="prob-card">
+    <div class="pc-q">First occurrence of target</div>
+    <div class="pc-cond">f(i) = nums[i] >= target</div>
+    <div class="pc-note">Same as above — find boundary, verify <code>nums[left] == target</code>.</div>
+  </div>
+  <div class="prob-card">
+    <div class="pc-q">Insert position</div>
+    <div class="pc-cond">f(i) = nums[i] >= target</div>
+    <div class="pc-note">The boundary IS the insert position. No extra logic needed. (Python's <code>bisect_left</code>.)</div>
+  </div>
+  <div class="prob-card">
+    <div class="pc-q">Minimum capacity to ship in D days</div>
+    <div class="pc-cond">f(cap) = can_ship(cap, D)</div>
+    <div class="pc-note">Search space is [max_weight, sum_weights]. f flips False→True as capacity grows.</div>
+  </div>
+  <div class="prob-card">
+    <div class="pc-q">Minimum speed to finish on time</div>
+    <div class="pc-cond">f(speed) = total_time(speed) &lt;= H</div>
+    <div class="pc-note">Search over possible speeds. Condition becomes True once speed is high enough.</div>
+  </div>
+  <div class="prob-card">
+    <div class="pc-q">Koko eating bananas</div>
+    <div class="pc-cond">f(k) = hours_needed(k) &lt;= H</div>
+    <div class="pc-note">Monotonic: higher k → fewer hours. Find first k where hours ≤ H.</div>
+  </div>
+  <div class="prob-card">
+    <div class="pc-q">Find peak element</div>
+    <div class="pc-cond">f(i) = nums[i] > nums[i+1]</div>
+    <div class="pc-note">Peak is where slope flips from rising to falling. The boundary is the peak.</div>
+  </div>
+  <div class="prob-card">
+    <div class="pc-q">Median of two sorted arrays</div>
+    <div class="pc-cond">f(partition) = left_max ≤ right_min</div>
+    <div class="pc-note">Binary search on the partition point. More complex f, same template.</div>
+  </div>
+</div>
+
+<div class="callout callout-blue">
+  <strong>The search space isn't always an array index.</strong> It can be any monotonic domain: ship capacity, speed, days, answer value. If you can define a True/False condition on it that's monotonic, binary search applies. This is the unlock.
+</div>
+
+<!-- worked example: shipping problem -->
+<div class="sub">
+<h3 class="sub-title">Worked example — "Min capacity to ship in D days"</h3>
+<p>You have packages with weights <code>[1,2,3,4,5,6,7,8,9,10]</code>, must ship all in D=5 days. Find minimum daily ship capacity.</p>
+<p>The condition: <em>"can we ship everything in 5 days at capacity cap?"</em> Check this by simulating greedily — ship as many packages as fit per day. For small cap this is False (takes too many days), for large enough cap it's True. That flip is the answer.</p>
+
+<pre><span class="kw">def</span> <span class="fn">can_ship</span>(weights, D, cap):
+    days, curr = <span class="num">1</span>, <span class="num">0</span>
+    <span class="kw">for</span> w <span class="kw">in</span> weights:
+        <span class="kw">if</span> curr + w > cap: days += <span class="num">1</span>; curr = <span class="num">0</span>
+        curr += w
+    <span class="kw">return</span> days <= D
+
+<span class="kw">def</span> <span class="fn">min_capacity</span>(weights, D):
+    left  = max(weights)       <span class="cm"># can't be less than heaviest package</span>
+    right = sum(weights)       <span class="cm"># worst case: ship all in one day</span>
+    <span class="kw">while</span> left < right:
+        mid = left + (right - left) // <span class="num">2</span>
+        <span class="kw">if</span> <span class="fn">can_ship</span>(weights, D, mid):
+            right = mid        <span class="cm"># mid works, but maybe smaller works too</span>
+        <span class="kw">else</span>:
+            left = mid + <span class="num">1</span>    <span class="cm"># mid too small</span>
+    <span class="kw">return</span> left</pre>
+<p>Same template. Only <code>f(mid)</code> changed. Search space is capacities, not array indices.</p>
+</div>
+</div>
+
+<!-- ══════════════════════════ APPROACH ══════════════════════════ -->
+<div class="section">
+<h2 class="section-title"><span class="tag">Approach</span>How to attack any binary search problem</h2>
+
+<p>Five steps, in order. Do not skip to step 4.</p>
+
+<svg class="fig" viewBox="0 0 680 68" role="img">
+  <title>Five steps: search space, yes/no condition, monotonicity, template, interpret</title>
+  <rect x="10"  y="8" width="114" height="52" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width=".8"/>
+  <rect x="138" y="8" width="114" height="52" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width=".8"/>
+  <rect x="266" y="8" width="114" height="52" rx="5" fill="#fee8e8" stroke="#c84b2f" stroke-width=".8"/>
+  <rect x="394" y="8" width="114" height="52" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width=".8"/>
+  <rect x="522" y="8" width="140" height="52" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width=".8"/>
+  <text x="67"  y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a5f8f">① define</text>
+  <text x="67"  y="45" text-anchor="middle" font-family="DM Sans,sans-serif"  font-size="11" fill="#4a4540">search space</text>
+  <text x="195" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a5f8f">② define</text>
+  <text x="195" y="45" text-anchor="middle" font-family="DM Sans,sans-serif"  font-size="11" fill="#4a4540">yes/no f(x)</text>
+  <text x="323" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#c84b2f">③ verify</text>
+  <text x="323" y="45" text-anchor="middle" font-family="DM Sans,sans-serif"  font-size="11" fill="#4a4540">monotonicity</text>
+  <text x="451" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">④ apply</text>
+  <text x="451" y="45" text-anchor="middle" font-family="DM Sans,sans-serif"  font-size="11" fill="#4a4540">template</text>
+  <text x="592" y="30" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">⑤ interpret</text>
+  <text x="592" y="45" text-anchor="middle" font-family="DM Sans,sans-serif"  font-size="11" fill="#4a4540">left at end</text>
+</svg>
+
+<p>Step ③ deserves extra attention — before applying the template, confirm the condition is actually monotonic. If <code>f(x)</code> can flip back and forth, binary search gives wrong results. This is the single most common reason a "binary search" solution fails.</p>
+
+<div class="callout">
+  <strong>Monotonicity check:</strong> ask yourself — if <code>f(x)</code> is True, is <code>f(x+1)</code> also True? If yes, the condition is monotone and the template is valid. If no, you need a different approach.
+</div>
+</div>
+
+<!-- ══════════════════════════ PITFALLS ══════════════════════════ -->
+<div class="section">
+<h2 class="section-title"><span class="tag">Common Mistakes</span>What goes wrong</h2>
+
+<table class="pt-table">
+  <thead><tr><th>Mistake</th><th>What happens</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Condition is not monotonic</td>
+      <td>Binary search finds the wrong boundary or loops infinitely</td>
+      <td>Rethink f(x). Binary search is only valid on monotonic conditions.</td>
+    </tr>
+    <tr>
+      <td><span class="bad">right = mid - 1</span> when f is True</td>
+      <td>Discards mid even though it could be the answer</td>
+      <td><span class="fix">right = mid</span> — keep mid, narrow from the right</td>
+    </tr>
+    <tr>
+      <td><span class="bad">left = mid</span> when f is False</td>
+      <td>Infinite loop when <code>right = left + 1</code> (mid == left, nothing moves)</td>
+      <td><span class="fix">left = mid + 1</span> — False means mid is definitively out</td>
+    </tr>
+    <tr>
+      <td><span class="bad">mid = (left + right) // 2</span></td>
+      <td>Integer overflow in Java/C++ for large indices</td>
+      <td><span class="fix">mid = left + (right - left) // 2</span></td>
+    </tr>
+    <tr>
+      <td>Setting <span class="bad">R = len - 1</span> instead of <span class="fix">R = len</span></td>
+      <td>Misses the case where the answer is at the last index or one past end (insert position)</td>
+      <td>R should be one past the last valid index when the answer could be "not found" or "insert at end"</td>
+    </tr>
+    <tr>
+      <td>Checking equality mid-loop</td>
+      <td>Temptation to add <code>if arr[mid] == target: return mid</code> — harmless but breaks the clean invariant model and causes confusion in harder problems</td>
+      <td>Trust the invariant. Let L==R determine the answer. Verify at the end.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="mental-model">
+  <div class="mm-title">Mental Model — Binary Search</div>
+  <ul>
+    <li>Binary search is a <strong>boundary finder</strong>, not an element finder. It finds the first x where a condition flips from False to True.</li>
+    <li>The invariant: <em>left of L = False, at R and right = True</em>. L and R close in until L==R. That's the answer.</li>
+    <li>When f(mid) is True → <code>right = mid</code> (keep it, could be answer). When False → <code>left = mid + 1</code> (discard it, definitely not).</li>
+    <li>The search space doesn't have to be array indices — it can be any value range where a monotonic condition applies.</li>
+    <li>Before applying: verify your condition is actually monotonic. That's the only prerequisite.</li>
+    <li>Exact search, first occurrence, insert position, min/max feasibility — all the same template, different f(x).</li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════ INVINCIBILITY CARD ══════════════════════════ -->
+<div class="section" style="margin-bottom:40px;">
+<h2 class="section-title"><span class="tag">Keep This to Heart</span>The complete binary search playbook</h2>
+
+<p>Every binary search problem reduces to answering four questions. Answer them and the code writes itself.</p>
+
+<div style="background:#1e1c1a;border-radius:10px;padding:28px 28px 24px;margin:20px 0;">
+
+  <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6a6560;margin-bottom:20px;">4 questions to answer before writing a single line</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;">
+    <div style="background:#2a2826;border-radius:7px;padding:14px 16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#7ec8e3;margin-bottom:6px;">① WHAT AM I SEARCHING OVER?</div>
+      <div style="font-size:13px;color:#c0bab2;line-height:1.6;">Define the search space. Must include every possible valid answer — don't be tight. Can be array indices, integers, or any value range.</div>
+    </div>
+    <div style="background:#2a2826;border-radius:7px;padding:14px 16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#7ec8e3;margin-bottom:6px;">② WHAT IS MY YES/NO CONDITION?</div>
+      <div style="font-size:13px;color:#c0bab2;line-height:1.6;">Define f(x) — a boolean that takes one candidate from the search space and answers True or False.</div>
+    </div>
+    <div style="background:#2a2826;border-radius:7px;padding:14px 16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#f87171;margin-bottom:6px;">③ IS IT MONOTONIC?</div>
+      <div style="font-size:13px;color:#c0bab2;line-height:1.6;">All NOs then all YESes — no alternating. If f(x) is True, f(x+1) must also be True. If this doesn't hold, binary search is wrong for this problem.</div>
+    </div>
+    <div style="background:#2a2826;border-radius:7px;padding:14px 16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#60d4a8;margin-bottom:6px;">④ DO I WANT FIRST YES OR LAST NO?</div>
+      <div style="font-size:13px;color:#c0bab2;line-height:1.6;">First YES → <span style="color:#fbbf24;font-family:'DM Mono',monospace;">return left</span>. Last NO → <span style="color:#fbbf24;font-family:'DM Mono',monospace;">return left - 1</span>. For exact match, check <span style="color:#fbbf24;font-family:'DM Mono',monospace;">nums[left] == target</span> after.</div>
+    </div>
+  </div>
+
+  <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#6a6560;margin-bottom:14px;">the template — never changes</div>
+
+<pre style="background:#111010;border-radius:6px;padding:18px 20px;margin:0;font-size:13px;line-height:1.7;overflow-x:auto;"><span class="kw">def</span> <span class="fn">binary_search</span>(search_space_start, search_space_end):
+    <span class="kw">def</span> <span class="fn">condition</span>(k) -> bool:
+        <span class="kw">pass</span>  <span class="cm"># ← your YES/NO condition here. this is the only thing that changes.</span>
+
+    left, right = search_space_start, search_space_end
+
+    <span class="kw">while</span> left < right:           <span class="cm"># runs until L == R. never exits early.</span>
+        mid = left + (right - left) // <span class="num">2</span>
+        <span class="kw">if</span> <span class="fn">condition</span>(mid):
+            right = mid           <span class="cm"># True: mid might be answer — keep it</span>
+        <span class="kw">else</span>:
+            left = mid + <span class="num">1</span>        <span class="cm"># False: mid is out — safe to discard</span>
+
+    <span class="kw">return</span> left                   <span class="cm"># first YES. use left-1 for last NO.</span></pre>
+
+  <div style="margin-top:18px;padding-top:16px;border-top:1px solid #2a2826;font-size:13px;color:#8a8278;line-height:1.7;">
+    <span style="color:#6a6560;font-family:'DM Mono',monospace;font-size:11px;">REMEMBER · </span>
+    This loop <strong style="color:#d4cfc8;">never exits early</strong> — it always runs until L == R. The answer is not found mid-loop; the search space is collapsed to one point and the answer is read at the end. This is the key difference from the <code style="background:#2a2826;padding:1px 5px;border-radius:3px;color:#f5c068;">while left &lt;= right / return mid</code> version. That version only works for exact match. This one works for everything.
+  </div>
+</div>
+</div>
+
+<hr>
+<p style="font-size:12px;color:var(--ink3);text-align:center;">Binary Search · boundary invariant · single template · O(log n)</p>
+
+</div>
+</body>
+</html>

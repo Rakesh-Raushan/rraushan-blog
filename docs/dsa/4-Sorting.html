@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorting Algorithms</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f7f5f0; --surface:#fffefb;
+    --ink:#1a1816; --ink2:#4a4540; --ink3:#8a8278;
+    --accent:#c84b2f; --accent2:#2a5f8f; --accent3:#2a7a4f;
+    --border:rgba(26,24,22,0.1); --border2:rgba(26,24,22,0.06);
+    --code-bg:#f0ede6;
+    --mental-bg:#f0edf8; --mental-border:#7c5cbf; --mental-ink:#3a2060;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);line-height:1.75;font-size:15px;font-weight:300;}
+  .page{max-width:820px;margin:0 auto;padding:56px 32px 96px;}
+
+  .doc-title{font-family:'Instrument Serif',serif;font-size:42px;font-weight:400;letter-spacing:-.5px;margin-bottom:6px;}
+  .doc-subtitle{font-size:14px;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase;margin-bottom:48px;}
+
+  .algo{margin-bottom:72px;}
+  .algo-title{font-family:'Instrument Serif',serif;font-size:28px;font-weight:400;margin-bottom:6px;padding-bottom:10px;border-bottom:1.5px solid var(--border);}
+  .algo-title .tag{font-family:'DM Mono',monospace;font-size:11px;font-weight:400;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px;}
+  .sub{margin-top:26px;}
+  .sub-title{font-family:'Instrument Serif',serif;font-style:italic;font-size:19px;font-weight:400;margin-bottom:10px;}
+
+  p{margin-bottom:12px;color:var(--ink2);}
+  p:last-child{margin-bottom:0;}
+
+  .callout{background:var(--surface);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:12px 16px;margin:16px 0;font-size:14px;color:var(--ink2);}
+  .callout strong{color:var(--ink);font-weight:500;}
+  .callout-blue{border-left-color:var(--accent2);}
+  .callout-green{border-left-color:var(--accent3);}
+  .callout-purple{border-left-color:var(--mental-border);}
+
+  .mental-model{background:var(--mental-bg);border:1px solid rgba(124,92,191,.25);border-left:3px solid var(--mental-border);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;}
+  .mental-model .mm-title{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--mental-border);margin-bottom:8px;}
+  .mental-model ul{list-style:none;padding:0;}
+  .mental-model ul li{position:relative;padding-left:18px;font-size:14px;color:var(--mental-ink);margin-bottom:6px;line-height:1.6;}
+  .mental-model ul li::before{content:'◆';position:absolute;left:0;top:1px;font-size:8px;color:var(--mental-border);}
+  .mental-model ul li:last-child{margin-bottom:0;}
+
+  code{font-family:'DM Mono',monospace;font-size:13px;background:var(--code-bg);padding:1px 5px;border-radius:3px;color:var(--accent);}
+  pre{font-family:'DM Mono',monospace;font-size:12.5px;background:#1e1c1a;color:#d4cfc8;border-radius:8px;padding:18px 20px;line-height:1.65;overflow-x:auto;margin:14px 0;}
+  pre .kw{color:#c084fc;} pre .fn{color:#60d4a8;} pre .st{color:#f5c068;}
+  pre .cm{color:#6a6560;font-style:italic;} pre .num{color:#7ec8e3;} pre .cl{color:#fbbf24;}
+
+  /* complexity pill row */
+  .cx{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;}
+  .pill{font-family:'DM Mono',monospace;font-size:12px;padding:4px 10px;border-radius:4px;display:inline-flex;align-items:center;gap:6px;}
+  .pill .pl{font-size:10px;color:rgba(0,0,0,.45);letter-spacing:.06em;text-transform:uppercase;}
+  .p-green{background:#e8f4ec;color:#1a5c32;}
+  .p-amber{background:#fef3e2;color:#7a4a00;}
+  .p-red  {background:#fee8e8;color:#7a1a1a;}
+  .p-gray {background:#f0ede6;color:#4a4540;}
+  .p-blue {background:#e8f0f8;color:#1a3a6c;}
+
+  /* big comparison table */
+  .big-table{width:100%;border-collapse:collapse;font-size:13px;margin:20px 0;}
+  .big-table th{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);font-weight:400;padding:8px 10px;border-bottom:1px solid var(--border);text-align:left;}
+  .big-table td{padding:9px 10px;border-bottom:1px solid var(--border2);vertical-align:top;color:var(--ink2);}
+  .big-table tr:last-child td{border-bottom:none;}
+  .big-table .algo-name{font-weight:500;color:var(--ink);font-size:13px;}
+  .g{color:var(--accent3);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;}
+  .a{color:#c07800;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;}
+  .r{color:var(--accent);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;}
+  .badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 6px;border-radius:3px;}
+  .b-yes{background:#e8f4ec;color:#1a5c32;}
+  .b-no {background:#fee8e8;color:#7a1a1a;}
+  .b-dep{background:#fef3e2;color:#7a4a00;}
+
+  svg.fig{display:block;width:100%;margin:18px 0;}
+  hr{border:none;border-top:1px solid var(--border);margin:48px 0;}
+  .section-anchor{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;margin-top:40px;display:block;}
+
+  /* when-to-use cards */
+  .use-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+  .use-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+  .use-card .uc-q{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;}
+  .use-card .uc-a{font-size:12px;color:var(--ink3);line-height:1.5;}
+  .use-card .uc-a code{font-size:11px;}
+
+  @media(max-width:560px){.use-grid{grid-template-columns:1fr;}.page{padding:32px 18px 64px;}.doc-title{font-size:30px;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1 class="doc-title">Sorting Algorithms</h1>
+<p class="doc-subtitle">Ideas, implementations, complexity & when to use what</p>
+
+<!-- ══════════════════════════════════════════════════════════
+     INSERTION SORT
+══════════════════════════════════════════════════════════ -->
+<div class="algo">
+<h2 class="algo-title"><span class="tag">O(n²) · In-place · Stable</span>Insertion Sort</h2>
+
+<p><strong style="font-weight:500">Core idea:</strong> a single-element array is always sorted. A sorted array of size n can absorb one more element and stay sorted — you just insert it at the right position. Build on exactly this: treat the leftmost element as a sorted array of size 1, then expand right one element at a time, each time inserting the new element into its correct position in the already-sorted left portion.</p>
+
+<!-- visual -->
+<svg class="fig" viewBox="0 0 680 160" role="img">
+  <title>Insertion sort: sorted left portion grows one element at a time</title>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#2a5f8f" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+  <!-- pass 0 -->
+  <text x="10" y="18" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">pass 1 (i=1)</text>
+  <rect x="10"  y="24" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1.2"/>
+  <rect x="58"  y="24" width="44" height="30" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1.5"/>
+  <rect x="106" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="154" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="202" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <text x="32"  y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">5</text>
+  <text x="80"  y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f" font-weight="500">2</text>
+  <text x="128" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">8</text>
+  <text x="176" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">1</text>
+  <text x="224" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">6</text>
+  <text x="32"  y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#2a7a4f">sorted</text>
+  <text x="80"  y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#c84b2f">insert</text>
+  <!-- arrow: 2 shifts left past 5 -->
+  <path d="M80 22 Q45 10 32 22" fill="none" stroke="#c84b2f" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#a)"/>
+
+  <!-- pass 1 result -->
+  <text x="310" y="18" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">after pass 1</text>
+  <rect x="310" y="24" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="358" y="24" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="406" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="454" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="502" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <text x="332" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">2</text>
+  <text x="380" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">5</text>
+  <text x="428" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">8</text>
+  <text x="476" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">1</text>
+  <text x="524" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">6</text>
+  <text x="346" y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#2a7a4f">sorted (size 2)</text>
+
+  <!-- final row -->
+  <text x="10" y="96" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">... continue until fully sorted →</text>
+  <rect x="10"  y="106" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="58"  y="106" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="106" y="106" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="154" y="106" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="202" y="106" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <text x="32"  y="126" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">1</text>
+  <text x="80"  y="126" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">2</text>
+  <text x="128" y="126" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">5</text>
+  <text x="176" y="126" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">6</text>
+  <text x="224" y="126" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#2a7a4f">8</text>
+  <text x="128" y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#2a7a4f">sorted ✓</text>
+</svg>
+
+<div class="sub">
+<h3 class="sub-title">Pseudo code</h3>
+<pre><span class="cm"># outer loop: i walks right, arr[0..i-1] is always sorted</span>
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, len(arr)):
+    j = i - <span class="num">1</span>                    <span class="cm"># start just left of i</span>
+    <span class="kw">while</span> j >= <span class="num">0</span> <span class="kw">and</span> arr[j] > arr[j+<span class="num">1</span>]:
+        arr[j], arr[j+<span class="num">1</span>] = arr[j+<span class="num">1</span>], arr[j]   <span class="cm"># swap left</span>
+        j -= <span class="num">1</span></pre>
+</div>
+
+<div class="cx">
+  <span class="pill p-amber"><span class="pl">best</span>O(n)</span>
+  <span class="pill p-red"><span class="pl">avg/worst</span>O(n²)</span>
+  <span class="pill p-green"><span class="pl">space</span>O(1) in-place</span>
+  <span class="pill p-blue"><span class="pl">stable</span>yes</span>
+  <span class="pill p-green"><span class="pl">adaptive</span>yes — fast on nearly sorted</span>
+</div>
+
+<div class="callout callout-blue">
+  <strong>Best case O(n):</strong> if the array is already sorted, the inner while never executes. This is why insertion sort is used as the finishing step inside Timsort — it's exceptionally fast on nearly-sorted runs.
+</div>
+
+<div class="mental-model">
+  <div class="mm-title">When to think about it</div>
+  <ul>
+    <li>Almost never implement this in an interview — but interviewers occasionally ask you to explain it.</li>
+    <li>Know it because it's the clearest illustration of "grow a sorted sub-array by one at a time."</li>
+    <li>Used internally by Timsort (Python's built-in) for small sub-arrays (&lt;64 elements) — that's its practical relevance.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MERGE SORT
+══════════════════════════════════════════════════════════ -->
+<div class="algo">
+<h2 class="algo-title"><span class="tag">O(n log n) · Not in-place · Stable · Recursive</span>Merge Sort</h2>
+
+<p><strong style="font-weight:500">Two ideas combined:</strong> (1) a single-element array is sorted. (2) two sorted arrays can be merged into one sorted array in O(n) using three pointers. Recursively split the array until you have single elements, then merge back up.</p>
+
+<!-- split + merge visual -->
+<svg class="fig" viewBox="0 0 680 220" role="img">
+  <title>Merge sort: recursive split down to single elements, then merge back up</title>
+  <defs>
+    <marker id="ad" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#8a8278" stroke-width="1.5" stroke-linecap="round"/></marker>
+    <marker id="au" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#2a7a4f" stroke-width="1.5" stroke-linecap="round"/></marker>
+  </defs>
+
+  <!-- level 0: full array -->
+  <rect x="230" y="8" width="220" height="28" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="340" y="26" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a5f8f">[5, 2, 8, 1]</text>
+
+  <!-- level 1 split arrows -->
+  <line x1="310" y1="36" x2="230" y2="66" stroke="#c0bab2" stroke-width=".9" marker-end="url(#ad)"/>
+  <line x1="370" y1="36" x2="450" y2="66" stroke="#c0bab2" stroke-width=".9" marker-end="url(#ad)"/>
+
+  <!-- level 1 -->
+  <rect x="160" y="68" width="120" height="28" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width=".8"/>
+  <rect x="400" y="68" width="120" height="28" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width=".8"/>
+  <text x="220" y="86" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a5f8f">[5, 2]</text>
+  <text x="460" y="86" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a5f8f">[8, 1]</text>
+
+  <!-- level 2 split arrows -->
+  <line x1="200" y1="96" x2="160" y2="126" stroke="#c0bab2" stroke-width=".9" marker-end="url(#ad)"/>
+  <line x1="240" y1="96" x2="280" y2="126" stroke="#c0bab2" stroke-width=".9" marker-end="url(#ad)"/>
+  <line x1="440" y1="96" x2="400" y2="126" stroke="#c0bab2" stroke-width=".9" marker-end="url(#ad)"/>
+  <line x1="480" y1="96" x2="520" y2="126" stroke="#c0bab2" stroke-width=".9" marker-end="url(#ad)"/>
+
+  <!-- level 2: single elements -->
+  <rect x="130" y="128" width="52" height="28" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1.2"/>
+  <rect x="254" y="128" width="52" height="28" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1.2"/>
+  <rect x="374" y="128" width="52" height="28" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1.2"/>
+  <rect x="494" y="128" width="52" height="28" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1.2"/>
+  <text x="156" y="147" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a7a4f">[5]</text>
+  <text x="280" y="147" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a7a4f">[2]</text>
+  <text x="400" y="147" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a7a4f">[8]</text>
+  <text x="520" y="147" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a7a4f">[1]</text>
+  <text x="340" y="147" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">base cases ✓</text>
+
+  <!-- merge arrows up -->
+  <line x1="156" y1="156" x2="186" y2="186" stroke="#2a7a4f" stroke-width=".9" marker-end="url(#au)"/>
+  <line x1="280" y1="156" x2="246" y2="186" stroke="#2a7a4f" stroke-width=".9" marker-end="url(#au)"/>
+  <line x1="400" y1="156" x2="428" y2="186" stroke="#2a7a4f" stroke-width=".9" marker-end="url(#au)"/>
+  <line x1="520" y1="156" x2="492" y2="186" stroke="#2a7a4f" stroke-width=".9" marker-end="url(#au)"/>
+
+  <!-- merged pairs -->
+  <rect x="162" y="188" width="108" height="28" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="400" y="188" width="108" height="28" rx="5" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <text x="216" y="206" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">[2, 5]</text>
+  <text x="454" y="206" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">[1, 8]</text>
+
+  <!-- labels -->
+  <text x="8" y="22"  font-family="DM Mono,monospace" font-size="9" fill="#8a8278">split ↓</text>
+  <text x="8" y="144" font-family="DM Mono,monospace" font-size="9" fill="#2a7a4f">merge ↑</text>
+</svg>
+
+<p>The merge step uses three pointers: one for each input array and one for the output. Each comparison picks the smaller of the two current minimums — O(n) total per merge level.</p>
+
+<div class="sub">
+<h3 class="sub-title">Implementation — pass indices, not copies</h3>
+<div class="callout callout-blue">
+  <strong>Always work with indices.</strong> Slicing arrays to pass into recursive calls creates O(n) copies at every level — that's O(n log n) extra space for nothing. Pass <code>start</code>, <code>mid</code>, <code>end</code> indices and operate on the same array in-place.
+</div>
+
+<pre><span class="kw">def</span> <span class="fn">merge</span>(arr, start, mid, end):
+    left  = arr[start:mid+<span class="num">1</span>]    <span class="cm"># temp copies only for the merge step</span>
+    right = arr[mid+<span class="num">1</span>:end+<span class="num">1</span>]
+    i = j = <span class="num">0</span>
+    k = start
+    <span class="kw">while</span> i < len(left) <span class="kw">and</span> j < len(right):
+        <span class="kw">if</span> left[i] <= right[j]:
+            arr[k] = left[i]; i += <span class="num">1</span>
+        <span class="kw">else</span>:
+            arr[k] = right[j]; j += <span class="num">1</span>
+        k += <span class="num">1</span>
+    <span class="kw">while</span> i < len(left):  arr[k] = left[i];  i += <span class="num">1</span>; k += <span class="num">1</span>
+    <span class="kw">while</span> j < len(right): arr[k] = right[j]; j += <span class="num">1</span>; k += <span class="num">1</span>
+
+<span class="kw">def</span> <span class="fn">merge_sort</span>(arr, start, end):
+    <span class="kw">if</span> start >= end:             <span class="cm"># base case: single element</span>
+        <span class="kw">return</span>
+    mid = (start + end) // <span class="num">2</span>
+    <span class="fn">merge_sort</span>(arr, start, mid)
+    <span class="fn">merge_sort</span>(arr, mid+<span class="num">1</span>, end)
+    <span class="fn">merge</span>(arr, start, mid, end)
+
+<span class="cm"># call: merge_sort(arr, 0, len(arr)-1)</span></pre>
+</div>
+
+<div class="cx">
+  <span class="pill p-green"><span class="pl">all cases</span>O(n log n)</span>
+  <span class="pill p-amber"><span class="pl">space</span>O(n) — temp arrays</span>
+  <span class="pill p-blue"><span class="pl">stable</span>yes</span>
+  <span class="pill p-gray"><span class="pl">adaptive</span>no</span>
+  <span class="pill p-green"><span class="pl">external sort</span>yes — disk-friendly</span>
+</div>
+
+<div class="callout">
+  <strong>External sort winner:</strong> merge sort is the standard algorithm for sorting data that doesn't fit in RAM (files, databases). You sort chunks that fit in memory, write them to disk, then merge. No other algorithm here supports this cleanly.
+</div>
+
+<div class="callout callout-purple">
+  <strong>Merge k sorted arrays/lists:</strong> the same merge idea extends naturally. For k=2 arrays, compare each pair — fine. For k arrays, comparing pairwise is O(k) per element. Instead, use a <strong>min-heap</strong> of size k seeded with the first element of each array. Pop the minimum (O(log k)), push the next element from that array (O(log k)). Total: O(n log k). The heap insight generalises: <em>whenever you need repeated min/max from multiple sources, think heap</em>.
+</div>
+
+<div class="mental-model">
+  <div class="mm-title">When to think about it</div>
+  <ul>
+    <li>Default choice when you need <strong>guaranteed O(n log n)</strong> — no worst-case degradation unlike quicksort.</li>
+    <li>Only O(n log n) sort that works well on <strong>linked lists</strong> (no random access needed for merging).</li>
+    <li>Needed for <strong>external sorting</strong> (data larger than RAM).</li>
+    <li>Pattern to recognise: "merge k sorted ___" → merge sort + heap.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     QUICK SORT
+══════════════════════════════════════════════════════════ -->
+<div class="algo">
+<h2 class="algo-title"><span class="tag">O(n log n) avg · In-place · Unstable · Recursive</span>Quick Sort</h2>
+
+<p><strong style="font-weight:500">Core insight:</strong> an element is in its final sorted position when everything to its left is smaller and everything to its right is larger. Quick sort finds that position for one element (the <em>pivot</em>), then recurses on the left and right sub-arrays.</p>
+
+<p>The process of rearranging elements around the pivot is called <strong style="font-weight:500">partition</strong>. Pick the rightmost element as pivot. Use two pointers: <code>left</code> (tracks boundary of "smaller than pivot" region) and <code>i</code> (scans left to right). Whenever <code>arr[i] &lt; pivot</code>, swap it to the <code>left</code> region and advance <code>left</code>. At the end, swap pivot into <code>left</code> position — that's its final sorted index.</p>
+
+<!-- partition visual -->
+<svg class="fig" viewBox="0 0 680 160" role="img">
+  <title>Quicksort partition: pivot=6, smaller elements gathered to the left</title>
+  <defs>
+    <marker id="ap" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#c84b2f" stroke-width="1.5" stroke-linecap="round"/></marker>
+    <marker id="apg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#2a7a4f" stroke-width="1.5" stroke-linecap="round"/></marker>
+  </defs>
+
+  <text x="10" y="16" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">partition([3, 8, 2, 5, 1, 6])  pivot = 6 (rightmost)</text>
+
+  <!-- initial state -->
+  <rect x="10"  y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="58"  y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="106" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="154" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="202" y="24" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="250" y="24" width="44" height="30" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1.5"/>
+  <text x="32"  y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">3</text>
+  <text x="80"  y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">8</text>
+  <text x="128" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">2</text>
+  <text x="176" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">5</text>
+  <text x="224" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#4a4540">1</text>
+  <text x="272" y="44" text-anchor="middle" font-family="DM Mono,monospace" font-size="15" fill="#c84b2f" font-weight="500">6</text>
+  <text x="272" y="66" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#c84b2f">pivot</text>
+
+  <!-- after partition -->
+  <text x="10" y="86" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">after partition → pivot lands at its sorted position</text>
+  <rect x="10"  y="94" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="58"  y="94" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="106" y="94" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="154" y="94" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="202" y="94" width="44" height="30" rx="4" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="250" y="94" width="44" height="30" rx="4" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <text x="32"  y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">3</text>
+  <text x="80"  y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">2</text>
+  <text x="128" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">5</text>
+  <text x="176" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#2a7a4f">1</text>
+  <rect x="202" y="94" width="44" height="30" rx="4" fill="#fee8e8" stroke="#c84b2f" stroke-width="1.5"/>
+  <text x="224" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#c84b2f" font-weight="500">6</text>
+  <text x="272" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="14" fill="#4a4540">8</text>
+  <text x="224" y="136" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#c84b2f">sorted position ✓</text>
+  <text x="96"  y="136" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#2a7a4f">all &lt; 6</text>
+  <text x="272" y="136" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#4a4540">all &gt; 6</text>
+
+  <!-- recurse labels -->
+  <text x="430" y="44" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">recurse on [3,8,2,5,1]</text>
+  <text x="430" y="58" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">and on [8] separately</text>
+</svg>
+
+<pre><span class="kw">def</span> <span class="fn">partition</span>(arr, low, high):
+    pivot = arr[high]
+    left  = low - <span class="num">1</span>               <span class="cm"># right boundary of "smaller" region</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(low, high):
+        <span class="kw">if</span> arr[i] < pivot:
+            left += <span class="num">1</span>
+            arr[left], arr[i] = arr[i], arr[left]
+    arr[left+<span class="num">1</span>], arr[high] = arr[high], arr[left+<span class="num">1</span>]  <span class="cm"># pivot to sorted pos</span>
+    <span class="kw">return</span> left + <span class="num">1</span>              <span class="cm"># pivot's final index</span>
+
+<span class="kw">def</span> <span class="fn">quick_sort</span>(arr, low, high):
+    <span class="kw">if</span> low >= high:
+        <span class="kw">return</span>
+    pivot_idx = <span class="fn">partition</span>(arr, low, high)
+    <span class="fn">quick_sort</span>(arr, low, pivot_idx - <span class="num">1</span>)
+    <span class="fn">quick_sort</span>(arr, pivot_idx + <span class="num">1</span>, high)</pre>
+
+<div class="cx">
+  <span class="pill p-green"><span class="pl">avg</span>O(n log n)</span>
+  <span class="pill p-red"><span class="pl">worst</span>O(n²) sorted input</span>
+  <span class="pill p-green"><span class="pl">space</span>O(log n) stack</span>
+  <span class="pill p-amber"><span class="pl">stable</span>no</span>
+  <span class="pill p-gray"><span class="pl">adaptive</span>no</span>
+</div>
+
+<div class="callout">
+  <strong>Why faster than merge sort in practice:</strong> both are O(n log n) average, but quicksort operates entirely in-place with sequential memory access. Merge sort writes to auxiliary arrays, causing cache misses. Modern CPUs prefetch sequential reads — quicksort's linear scan through the partition is extremely cache-friendly. Heapsort is also O(n log n) but jumps around memory even more — that's why quicksort beats heapsort in real benchmarks despite similar asymptotic complexity.
+</div>
+
+<div class="callout callout-blue">
+  <strong>Worst case:</strong> already-sorted (or reverse-sorted) input with rightmost pivot gives O(n²) — pivot is always the min/max, one partition has size 0. Fix: random pivot, or median-of-three. Python's sort avoids this entirely.
+</div>
+
+<div class="mental-model">
+  <div class="mm-title">When to think about it</div>
+  <ul>
+    <li>Best general-purpose in-place sort for random data. Python/C++ standard libraries use quicksort variants internally.</li>
+    <li><strong>Quickselect</strong> (find k-th smallest) uses the same partition idea — O(n) average. Important interview pattern.</li>
+    <li>Avoid on nearly-sorted data without randomised pivot.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     BUCKET / COUNTING SORT
+══════════════════════════════════════════════════════════ -->
+<div class="algo">
+<h2 class="algo-title"><span class="tag">O(n + k) · Not comparative · Linear time</span>Bucket Sort <small style="font-size:14px;color:var(--ink3);font-family:'DM Sans',sans-serif;font-weight:300"> (also: counting sort)</small></h2>
+
+<p><strong style="font-weight:500">Core insight:</strong> if you know the value range, you don't need to compare elements at all. Scan the array once to build a frequency map (one slot per possible value), then reconstruct the sorted array by walking the slots in order.</p>
+
+<!-- bucket visual -->
+<svg class="fig" viewBox="0 0 680 130" role="img">
+  <title>Bucket sort: [0,2,1,2,1,3] → freq map → sorted output</title>
+  <!-- input -->
+  <text x="10" y="16" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">input: [0, 2, 1, 2, 1, 3]</text>
+  <rect x="10"  y="22" width="34" height="26" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="48"  y="22" width="34" height="26" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="86"  y="22" width="34" height="26" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="124" y="22" width="34" height="26" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="162" y="22" width="34" height="26" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <rect x="200" y="22" width="34" height="26" rx="3" fill="#f0ede6" stroke="#c0bab2" stroke-width=".8"/>
+  <text x="27"  y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#4a4540">0</text>
+  <text x="65"  y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#4a4540">2</text>
+  <text x="103" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#4a4540">1</text>
+  <text x="141" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#4a4540">2</text>
+  <text x="179" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#4a4540">1</text>
+  <text x="217" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#4a4540">3</text>
+
+  <!-- arrow -->
+  <text x="260" y="40" font-family="DM Mono,monospace" font-size="18" fill="#c0bab2">→</text>
+
+  <!-- freq buckets -->
+  <text x="290" y="16" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">freq map (O(n) scan)</text>
+  <rect x="290" y="22" width="40" height="26" rx="3" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="334" y="22" width="40" height="26" rx="3" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="378" y="22" width="40" height="26" rx="3" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="422" y="22" width="40" height="26" rx="3" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="310" y="36" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">0→1</text>
+  <text x="354" y="36" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">1→2</text>
+  <text x="398" y="36" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">2→2</text>
+  <text x="442" y="36" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">3→1</text>
+
+  <!-- arrow -->
+  <text x="476" y="40" font-family="DM Mono,monospace" font-size="18" fill="#c0bab2">→</text>
+
+  <!-- output -->
+  <text x="500" y="16" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">sorted output</text>
+  <rect x="500" y="22" width="26" height="26" rx="3" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="530" y="22" width="26" height="26" rx="3" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="560" y="22" width="26" height="26" rx="3" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="590" y="22" width="26" height="26" rx="3" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="620" y="22" width="26" height="26" rx="3" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <rect x="650" y="22" width="26" height="26" rx="3" fill="#e8f4ec" stroke="#2a7a4f" stroke-width="1"/>
+  <text x="513" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">0</text>
+  <text x="543" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">1</text>
+  <text x="573" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">1</text>
+  <text x="603" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">2</text>
+  <text x="633" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">2</text>
+  <text x="663" y="40" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="#2a7a4f">3</text>
+
+  <!-- limitation callout -->
+  <rect x="10" y="66" width="660" height="54" rx="6" fill="#fff8f0" stroke="rgba(200,75,47,.25)" stroke-width=".8"/>
+  <text x="24" y="84" font-family="DM Mono,monospace" font-size="10" fill="#c84b2f">LIMITATION: small range + large list = great.  Large range + small list = terrible.</text>
+  <text x="24" y="100" font-family="DM Sans,sans-serif" font-size="12" fill="#4a4540">e.g. sorting [1, 999999] — two elements, but you allocate 1,000,000 buckets. Wasted memory, slow.</text>
+  <text x="24" y="114" font-family="DM Sans,sans-serif" font-size="12" fill="#4a4540">Sweet spot: 1,000,000 elements with values 0–100. k=101 buckets, n=1M → very fast.</text>
+</svg>
+
+<pre><span class="kw">def</span> <span class="fn">bucket_sort</span>(arr):
+    <span class="kw">if not</span> arr: <span class="kw">return</span> arr
+    min_v, max_v = min(arr), max(arr)
+    buckets = [<span class="num">0</span>] * (max_v - min_v + <span class="num">1</span>)
+
+    <span class="kw">for</span> v <span class="kw">in</span> arr:                 <span class="cm"># build freq map — O(n)</span>
+        buckets[v - min_v] += <span class="num">1</span>
+
+    result = []
+    <span class="kw">for</span> i, count <span class="kw">in</span> enumerate(buckets):   <span class="cm"># reconstruct — O(k)</span>
+        result.extend([i + min_v] * count)
+    <span class="kw">return</span> result</pre>
+
+<div class="cx">
+  <span class="pill p-green"><span class="pl">time</span>O(n + k)</span>
+  <span class="pill p-amber"><span class="pl">space</span>O(k) buckets</span>
+  <span class="pill p-blue"><span class="pl">stable</span>yes</span>
+  <span class="pill p-gray"><span class="pl">comparative</span>no</span>
+</div>
+
+<div class="callout callout-blue">
+  <strong>Disguised bucket sort problems:</strong> the sort is often hidden. E.g. — 1000-item list but values are only R/G/B (Dutch flag problem), or sort by age (0–120), or top-k frequent elements. Whenever the domain of values is bounded and small relative to list size — think buckets.
+</div>
+
+<div class="mental-model">
+  <div class="mm-title">When to think about it</div>
+  <ul>
+    <li>Values have a <strong>known, small range</strong> relative to the list size — the range k should feel cheap.</li>
+    <li>The problem says "sort" and the elements can only take limited distinct values.</li>
+    <li>Also known as <strong>counting sort</strong> — same idea, different name.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     RADIX SORT
+══════════════════════════════════════════════════════════ -->
+<div class="algo">
+<h2 class="algo-title"><span class="tag">O(n · d) · Not comparative · Stable</span>Radix Sort</h2>
+
+<p><strong style="font-weight:500">The magic trick:</strong> instead of comparing elements, sort by individual digits — ones place first, then tens, then hundreds, all the way up. After d passes (d = number of digits in the max element), the array is sorted.</p>
+
+<p>Why does it work? Because each single-digit pass is a stable sort (preserving relative order of ties), and starting from the least significant digit means more significant digits correctly override when needed.</p>
+
+<!-- radix visual -->
+<svg class="fig" viewBox="0 0 680 136" role="img">
+  <title>Radix sort: [170,45,22] sorted by ones, then tens, then hundreds</title>
+
+  <!-- pass 1: ones -->
+  <text x="10" y="14" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">pass 1: ones digit</text>
+  <rect x="10"  y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="66"  y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="122" y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="36"  y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f">17<tspan fill="#c84b2f" font-weight="500">0</tspan></text>
+  <text x="92"  y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f">4<tspan fill="#c84b2f" font-weight="500">5</tspan></text>
+  <text x="148" y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f">2<tspan fill="#c84b2f" font-weight="500">2</tspan></text>
+  <text x="93" y="60" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#c84b2f">buckets 0→9</text>
+  <text x="10" y="72" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">→ [170, 22, 45]</text>
+
+  <!-- arrow -->
+  <text x="200" y="46" font-family="DM Mono,monospace" font-size="18" fill="#c0bab2">→</text>
+
+  <!-- pass 2: tens -->
+  <text x="230" y="14" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">pass 2: tens digit</text>
+  <rect x="230" y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="286" y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="342" y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="256" y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f">1<tspan fill="#c84b2f" font-weight="500">7</tspan>0</text>
+  <text x="312" y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f"><tspan fill="#c84b2f" font-weight="500">2</tspan>2</text>
+  <text x="368" y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f"><tspan fill="#c84b2f" font-weight="500">4</tspan>5</text>
+  <text x="299" y="72" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">→ [22, 45, 170]</text>
+
+  <!-- arrow -->
+  <text x="420" y="46" font-family="DM Mono,monospace" font-size="18" fill="#c0bab2">→</text>
+
+  <!-- pass 3: hundreds -->
+  <text x="450" y="14" font-family="DM Mono,monospace" font-size="10" fill="#8a8278">pass 3: hundreds digit</text>
+  <rect x="450" y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="506" y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <rect x="562" y="20" width="52" height="28" rx="4" fill="#e8f0f8" stroke="#2a5f8f" stroke-width="1"/>
+  <text x="476" y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f"><tspan fill="#c84b2f" font-weight="500">0</tspan>22</text>
+  <text x="532" y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f"><tspan fill="#c84b2f" font-weight="500">0</tspan>45</text>
+  <text x="588" y="39" text-anchor="middle" font-family="DM Mono,monospace" font-size="13" fill="#2a5f8f"><tspan fill="#c84b2f" font-weight="500">1</tspan>70</text>
+  <text x="519" y="72" font-family="DM Mono,monospace" font-size="10" fill="#2a7a4f">→ [22, 45, 170] ✓ sorted</text>
+
+  <!-- bucket vs radix comparison boxes -->
+  <rect x="10"  y="88" width="320" height="42" rx="5" fill="#e8f0f8" stroke="#2a5f8f" stroke-width=".8"/>
+  <rect x="340" y="88" width="330" height="42" rx="5" fill="#fee8e8" stroke="#c84b2f" stroke-width=".8"/>
+  <text x="170" y="106" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#2a5f8f">Bucket: wide not deep</text>
+  <text x="170" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4a4540">large n, small range k → k buckets is cheap</text>
+  <text x="505" y="106" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" fill="#c84b2f">Radix: deep not wide</text>
+  <text x="505" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#4a4540">large range is fine — just more digit passes d</text>
+</svg>
+
+<pre><span class="kw">def</span> <span class="fn">counting_sort_by_digit</span>(arr, exp):
+    n = len(arr)
+    output  = [<span class="num">0</span>] * n
+    buckets = [<span class="num">0</span>] * <span class="num">10</span>
+    <span class="kw">for</span> v <span class="kw">in</span> arr:
+        buckets[(v // exp) % <span class="num">10</span>] += <span class="num">1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">10</span>):           <span class="cm"># prefix sums → positions</span>
+        buckets[i] += buckets[i-<span class="num">1</span>]
+    <span class="kw">for</span> i <span class="kw">in</span> range(n-<span class="num">1</span>, -<span class="num">1</span>, -<span class="num">1</span>):    <span class="cm"># fill right-to-left for stability</span>
+        idx = (arr[i] // exp) % <span class="num">10</span>
+        output[buckets[idx]-<span class="num">1</span>] = arr[i]
+        buckets[idx] -= <span class="num">1</span>
+    arr[:] = output
+
+<span class="kw">def</span> <span class="fn">radix_sort</span>(arr):
+    max_v = max(arr)
+    exp = <span class="num">1</span>
+    <span class="kw">while</span> max_v // exp > <span class="num">0</span>:
+        <span class="fn">counting_sort_by_digit</span>(arr, exp)
+        exp *= <span class="num">10</span></pre>
+
+<div class="cx">
+  <span class="pill p-green"><span class="pl">time</span>O(n · d)</span>
+  <span class="pill p-amber"><span class="pl">space</span>O(n + b) b=base</span>
+  <span class="pill p-blue"><span class="pl">stable</span>yes</span>
+  <span class="pill p-gray"><span class="pl">comparative</span>no</span>
+</div>
+
+<div class="callout callout-purple">
+  <strong>Why radix is incredibly fast on modern CPUs:</strong> when the base is a power of 2 (e.g. base 256), extracting a digit becomes a bitmask + shift — <code>(v >> 8) &amp; 0xFF</code>. No division, no modulo. For 32-bit integers with base 256, d=4 passes over the array. Cache-friendly sequential scans, no branching from comparisons. Radix sort on integers often beats O(n log n) comparison sorts in wall-clock time despite the same or worse asymptotic complexity.
+</div>
+
+<div class="callout">
+  <strong>Sorting strings:</strong> radix sort works naturally on fixed-length strings — sort by last character, then second-to-last, etc. For variable-length strings, you can pad or use MSD (most-significant-digit) radix sort.
+</div>
+
+<div class="mental-model">
+  <div class="mm-title">When to think about it</div>
+  <ul>
+    <li>Large value range but small list — bucket/counting sort would need huge arrays; radix handles it with d passes.</li>
+    <li>Sorting integers or fixed-length strings at maximum speed.</li>
+    <li>Opposite suitability from bucket: <strong>bucket = spread specialist, radix = depth specialist</strong>.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     BIG COMPARISON TABLE
+══════════════════════════════════════════════════════════ -->
+<hr>
+<span class="section-anchor">Sorting Algorithm Reference</span>
+
+<table class="big-table">
+  <thead>
+    <tr>
+      <th>Algorithm</th>
+      <th>Best</th>
+      <th>Avg</th>
+      <th>Worst</th>
+      <th>Space</th>
+      <th>Stable</th>
+      <th>In-place</th>
+      <th>Adaptive</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="algo-name">Insertion</td>
+      <td class="g">O(n)</td>
+      <td class="r">O(n²)</td>
+      <td class="r">O(n²)</td>
+      <td class="g">O(1)</td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td>Best on nearly-sorted. Used in Timsort for small runs.</td>
+    </tr>
+    <tr>
+      <td class="algo-name">Merge</td>
+      <td class="g">O(n log n)</td>
+      <td class="g">O(n log n)</td>
+      <td class="g">O(n log n)</td>
+      <td class="a">O(n)</td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-no">no</span></td>
+      <td><span class="badge b-no">no</span></td>
+      <td>Guaranteed O(n log n). Best for external sort &amp; linked lists.</td>
+    </tr>
+    <tr>
+      <td class="algo-name">Quick</td>
+      <td class="g">O(n log n)</td>
+      <td class="g">O(n log n)</td>
+      <td class="r">O(n²)*</td>
+      <td class="g">O(log n)</td>
+      <td><span class="badge b-no">no</span></td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-no">no</span></td>
+      <td>Fastest in practice (cache). *Worst case avoidable with random pivot.</td>
+    </tr>
+    <tr>
+      <td class="algo-name">Heap</td>
+      <td class="g">O(n log n)</td>
+      <td class="g">O(n log n)</td>
+      <td class="g">O(n log n)</td>
+      <td class="g">O(1)</td>
+      <td><span class="badge b-no">no</span></td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-no">no</span></td>
+      <td>Guaranteed O(n log n), in-place. Slower than quicksort in practice (cache misses).</td>
+    </tr>
+    <tr>
+      <td class="algo-name">Bucket / Counting</td>
+      <td class="g">O(n + k)</td>
+      <td class="g">O(n + k)</td>
+      <td class="g">O(n + k)</td>
+      <td class="a">O(k)</td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-no">no</span></td>
+      <td><span class="badge b-dep">n/a</span></td>
+      <td>Linear. Only when range k is small. Not comparative.</td>
+    </tr>
+    <tr>
+      <td class="algo-name">Radix</td>
+      <td class="g">O(n·d)</td>
+      <td class="g">O(n·d)</td>
+      <td class="g">O(n·d)</td>
+      <td class="a">O(n+b)</td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-no">no</span></td>
+      <td><span class="badge b-dep">n/a</span></td>
+      <td>Linear. Large range fine. Bitmask variant blazing fast on integers.</td>
+    </tr>
+    <tr>
+      <td class="algo-name">Timsort (Python)</td>
+      <td class="g">O(n)</td>
+      <td class="g">O(n log n)</td>
+      <td class="g">O(n log n)</td>
+      <td class="a">O(n)</td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td><span class="badge b-no">no</span></td>
+      <td><span class="badge b-yes">yes</span></td>
+      <td>Merge sort + insertion sort hybrid. Exploits natural sorted runs. Default in Python &amp; Java.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size:12px;color:var(--ink3);margin-top:4px;">k = value range, d = number of digits, b = base (radix). Heap sort covered in the Heap section.</p>
+
+<!-- When to use grid -->
+<span class="section-anchor" style="margin-top:30px;">When to use what</span>
+<div class="use-grid">
+  <div class="use-card">
+    <div class="uc-q">General purpose / default</div>
+    <div class="uc-a">Just use <code>arr.sort()</code> — Timsort, O(n log n) guaranteed, stable, adaptive. Don't overthink it.</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Need guaranteed O(n log n) + stability</div>
+    <div class="uc-a">Merge sort. Timsort also qualifies. Pick merge sort if you need external or linked-list sort.</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">In-place, fast on random data</div>
+    <div class="uc-a">Quick sort with random pivot. Best cache behaviour. Avoid on nearly-sorted without randomisation.</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Data is mostly sorted already</div>
+    <div class="uc-a">Insertion sort (O(n) best case) or Timsort (recognises natural runs automatically).</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Integers / chars, small value range</div>
+    <div class="uc-a">Bucket / counting sort. O(n) time. Especially good when values are categorical (colours, ages, grades).</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Integers, large range but small list</div>
+    <div class="uc-a">Radix sort. d passes of O(n), range doesn't matter. Bitmask version is fastest for 32/64-bit ints.</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Sorting a stream (elements arrive one at a time)</div>
+    <div class="uc-a">Insertion sort (online). Or a heap to maintain top-k. Merge/quick/radix all need the full array first.</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Data too large for RAM</div>
+    <div class="uc-a">Merge sort. Sort RAM-sized chunks, write to disk, merge. Only sort suitable for external data.</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Sorting fixed-length strings</div>
+    <div class="uc-a">Radix sort character by character (LSD). Extremely fast — no comparisons, just bucket passes.</div>
+  </div>
+  <div class="use-card">
+    <div class="uc-q">Interview: "implement a sort"</div>
+    <div class="uc-a">Merge sort or quick sort. Know both cold. Merge if they want stable/guaranteed; quick if they want in-place.</div>
+  </div>
+</div>
+
+<hr>
+<p style="font-size:12px;color:var(--ink3);text-align:center;">Sorting Algorithms · Insertion · Merge · Quick · Bucket · Radix · Timsort</p>
+
+</div>
+</body>
+</html>

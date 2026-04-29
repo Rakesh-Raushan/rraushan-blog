@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Problem Solving Temperament</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f2ee; --surface: #fffefb; --ink: #1a1816; --ink2: #4a4540; --ink3: #8a8278;
+    --accent: #c84b2f; --accent2: #2a5f8f; --accent3: #2a7a4f;
+    --border: rgba(26,24,22,0.1); --border2: rgba(26,24,22,0.06);
+    --code-bg: #f0ede6;
+    --principle-bg: #faf8f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.8; font-size: 15px; font-weight: 300; }
+  .page { max-width: 760px; margin: 0 auto; padding: 56px 32px 96px; }
+
+  .doc-title { font-family: 'Instrument Serif', serif; font-size: 38px; font-weight: 400; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .doc-meta { font-size: 13px; color: var(--ink3); letter-spacing: 0.04em; margin-bottom: 8px; }
+  .doc-note { font-size: 13px; color: var(--ink3); font-style: italic; margin-bottom: 52px; border-left: 2px solid var(--border); padding-left: 12px; }
+
+  .principle {
+    background: var(--principle-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .principle-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .principle-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink3);
+    min-width: 24px;
+  }
+  .principle-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .principle-body {
+    padding: 16px 22px 18px 60px;
+  }
+  .principle-body p {
+    font-size: 14px;
+    color: var(--ink2);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  .principle-body p:last-child { margin-bottom: 0; }
+
+  /* Root cause label */
+  .root-cause {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: #fee8e8;
+    color: var(--accent);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .root-cause.good {
+    background: #e8f4ec;
+    color: var(--accent3);
+  }
+
+  .example-block {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-size: 13px;
+    color: var(--ink2);
+    border-left: 3px solid var(--accent2);
+  }
+  .example-block .ex-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 6px;
+  }
+
+  code { font-family: 'DM Mono', monospace; font-size: 13px; background: rgba(26,24,22,0.07); padding: 1px 5px; border-radius: 3px; color: var(--accent); }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+  .section-label { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 400; color: var(--ink3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; margin-top: 40px; }
+
+  @media (max-width: 520px) { .page { padding: 32px 18px 64px; } .doc-title { font-size: 28px; } .principle-body { padding: 14px 16px; } }
+</style>
+  <link rel="stylesheet" href="/assets/theme.css">
+</head>
+<body>
+<div class="page">
+
+  <h1 class="doc-title">Problem Solving Temperament</h1>
+  <p class="doc-meta">LIVING DOCUMENT · add entries as you observe patterns in your daily practice</p>
+  <p class="doc-note">These are not tricks. They are corrections to mental habits that degrade under pressure. Read before a contest, revisit when you make a mistake you've made before.</p>
+
+  <div class="section-label">Under Pressure</div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-num">01</span>
+      <span class="principle-title">Fear makes you skip exactly the step that matters</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Root cause: time anxiety</span>
+      <p>When you're nervous, there's a temptation to half-check something — to glance at the indexing and tell yourself "it probably works." It almost never does. The exact thing you skimmed is where the bug lives.</p>
+      <p>The counter-intuitive truth: taking 90 seconds to trace through a small example is faster than submitting, getting WA, re-reading for 5 minutes in a panic, and submitting again. The "shortcut" costs more time, not less.</p>
+      <div class="example-block">
+        <div class="ex-label">Example</div>
+        Off-by-one in a two-pointer — you convince yourself the boundary looks fine. It isn't. Take two concrete values, run your loop condition by hand. Two minutes of dry-run beats three wrong submissions.
+      </div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-num">02</span>
+      <span class="principle-title">Always test the edge case you're most tempted to skip</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Root cause: optimism bias</span>
+      <p>The cases worth testing before submitting: empty input, single element, all-same elements, the last/first index, when the answer is exactly at a boundary. These aren't exotic — they're the first tests any judge runs.</p>
+      <div class="example-block">
+        <div class="ex-label">Checklist before submitting</div>
+        Empty case · single element · first/last element as answer · duplicate values · negative numbers (if applicable) · the loop termination condition at n-1
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Clarity of Thought</div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-num">03</span>
+      <span class="principle-title">Do not invent constraints the problem didn't give you</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Root cause: over-engineering</span>
+      <p>Re-read the problem statement and ask for every constraint you're about to code around: <em>did the problem actually say this?</em> A lot of complexity comes from protecting against things that aren't required.</p>
+      <div class="example-block">
+        <div class="ex-label">Example</div>
+        Problem: remove all elements equal to <code>val</code>, order doesn't matter, return new length. You don't need to preserve the rest of the array — overwriting is fine. You don't need a separate result array. Two lines with two pointers, done. The instinct to "be careful" about the values you're overwriting is protecting against a constraint that doesn't exist.
+      </div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-num">04</span>
+      <span class="principle-title">For every line of code: "do I actually need this?"</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Root cause: defensive coding</span>
+      <p>Before writing a variable, a condition, a pointer — ask <em>so what?</em> What goes wrong if I don't have this? If nothing goes wrong, don't write it. Unnecessary variables are not just noise; they're things to maintain, things to get wrong, things to confuse yourself with under pressure.</p>
+      <div class="example-block">
+        <div class="ex-label">Example</div>
+        Browser history (linked list problem): almost every solution uses a <code>curr</code> pointer alongside <code>head</code>. But if you're only ever moving forward from the front, <code>head</code> itself is the cursor — moving <code>head = head.next</code> is identical and cleaner. The <code>curr</code> variable exists because it feels safer, not because it's needed.
+      </div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-num">05</span>
+      <span class="principle-title">Simple solutions are usually the correct ones</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause good">Mindset: minimalism</span>
+      <p>If your solution has grown to 30 lines and involves multiple auxiliary structures, pause. A simpler solution almost certainly exists. Complexity is a sign you haven't found the right framing yet — not a sign of rigor.</p>
+      <p>The best solutions are short because they match the structure of the problem. When you find that structure, the code writes itself.</p>
+      <div class="example-block">
+        <div class="ex-label">Heuristic</div>
+        If you're done and your solution is longer than you'd expect for the difficulty level — re-read the problem. You likely assumed a constraint that isn't there, or missed a property that makes things simpler.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Process</div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-num">06</span>
+      <span class="principle-title">Understand the output before you think about the algorithm</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Root cause: jumping ahead</span>
+      <p>Visualise exactly what the output should look like for two or three concrete inputs — before thinking about how to produce it. Problems feel hard because the algorithm seems unclear; usually the algorithm becomes obvious once the expected transformation is crystal clear.</p>
+      <div class="example-block">
+        <div class="ex-label">Practice</div>
+        Write out: input → expected output, for at least two examples (one normal, one edge). Then ask: what did I have to do mentally to get from one to the other? That's usually the algorithm.
+      </div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="principle-header">
+      <span class="principle-num">07</span>
+      <span class="principle-title">Slow down at the transitions — beginning, end, direction change</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Root cause: autopilot in the middle</span>
+      <p>Bugs live at the start of a loop, at the termination condition, and at any point where logic changes direction (e.g. switching from left-to-right to right-to-left, or from expansion to contraction in a sliding window). The middle of a loop is usually fine. Slow down at the boundaries.</p>
+    </div>
+  </div>
+
+  <div class="section-label">The Two Non-Negotiables</div>
+
+  <div class="principle" style="border-color: rgba(200,75,47,0.3);">
+    <div class="principle-header">
+      <span class="principle-num">08</span>
+      <span class="principle-title">Always start from brute force</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Non-negotiable</span>
+      <p>Never jump straight to the optimal. Start by thinking through the naive solution — even if you'd never submit it. This isn't wasted time. It forces you to fully understand what you're computing, catches constraints you glossed over when reading, and almost always reveals the structure that the optimisation exploits.</p>
+      <p>Brute force is also your settlement time. The problem that seemed vague when you first read it becomes concrete once you've thought through even a slow solution. You arrive at the optimisation phase with a clear head rather than a panicked one.</p>
+      <div class="example-block">
+        <div class="ex-label">Why it works</div>
+        Most optimal solutions are brute force with one observation applied — a redundant loop collapsed with a hashmap, a repeated computation memoized, a linear scan replaced with a sorted structure. You can only see the observation if you've first seen the brute force.
+      </div>
+    </div>
+  </div>
+
+  <div class="principle" style="border-color: rgba(200,75,47,0.3);">
+    <div class="principle-header">
+      <span class="principle-num">09</span>
+      <span class="principle-title">Write pseudo code before writing code</span>
+    </div>
+    <div class="principle-body">
+      <span class="root-cause">Non-negotiable</span>
+      <p>If your pseudo code doesn't work, your code will not work. If your pseudo code works, the code will work — and it will take only a few minutes to write, because all the decisions are already made.</p>
+      <p>This feels like spending time. It is the opposite. The speed of your mind is effectively infinite — once you know exactly what to do, implementation is mechanical. All the real time is spent deciding: what structure, what order, what condition, what the loop invariant is. Pseudo code is where that deciding happens, cleanly, without the noise of syntax.</p>
+      <p>Never start typing code while there is still any open question about the approach. Every line of code written before the approach is settled is likely to be rewritten.</p>
+      <div class="example-block">
+        <div class="ex-label">What pseudo code looks like</div>
+        Not formal syntax. Just: "use two pointers l, r. while l &lt; r, if sum &lt; target move l right, if sum &gt; target move r left, if equal record and move both." That's enough. If you can write that and believe it, the code is ten minutes away. If you can't write that, no amount of typing will save you.
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <p style="font-size:12px;color:var(--ink3);text-align:center;">Problem Solving Temperament · living document — add entries as you observe them in practice</p>
+
+</div>
+</body>
+</html>
