@@ -11,7 +11,7 @@ theme:
   favicon: assets/logo.png
   font:
     text: DM Sans
-    code: JetBrains Mono
+    code: DM Mono
   icon:
     repo: fontawesome/brands/github
   features:
@@ -32,15 +32,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: black
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: black
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to dark mode

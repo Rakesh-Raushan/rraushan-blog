@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Typing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #fffefb;
+    --ink: #1a1816;
+    --ink2: #4a4540;
+    --ink3: #8a8278;
+    --accent: #c84b2f;
+    --accent2: #2a5f8f;
+    --accent3: #2a7a4f;
+    --border: rgba(26,24,22,0.1);
+    --border2: rgba(26,24,22,0.06);
+    --code-bg: #f0ede6;
+    --mental-bg: #f0edf8;
+    --mental-border: #7c5cbf;
+    --mental-ink: #3a2060;
+    --dark-code: #1e1c1a;
+    --dark-code-fg: #d4cfc8;
+    --dark-border: rgba(255,255,255,0.08);
+    --dark-header: rgba(255,255,255,0.04);
+    --accent-bg: rgba(200,75,47,0.07);
+    --accent-bd: rgba(200,75,47,0.2);
+    --accent2-bg: rgba(42,95,143,0.07);
+    --accent2-bd: rgba(42,95,143,0.2);
+    --accent3-bg: rgba(42,122,79,0.07);
+    --accent3-bd: rgba(42,122,79,0.2);
+    --nav-muted: rgba(247,245,240,0.5);
+    --mac-yellow: #c8a44a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  /* ─── LAYOUT ─── */
+  .page-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    border-bottom: 2px solid var(--ink);
+    padding: 72px 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: 'TYPE';
+    position: absolute;
+    right: -12px;
+    top: 20px;
+    font-family: 'Instrument Serif', serif;
+    font-size: 180px;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--border);
+    letter-spacing: -8px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .hero-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(42px, 7vw, 72px);
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    font-weight: 400;
+    max-width: 640px;
+    margin-bottom: 24px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--ink2);
+    max-width: 520px;
+    font-weight: 300;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-meta-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.05em;
+  }
+  .hero-meta-item strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  /* ─── NAV ─── */
+  .toc-rail {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 3px solid var(--accent);
+  }
+  .toc-inner {
+    display: inline-flex;
+    gap: 0;
+    padding: 0;
+  }
+  .toc-inner a {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nav-muted);
+    text-decoration: none;
+    padding: 14px 20px;
+    border-right: 1px solid var(--dark-border);
+    transition: all 0.15s;
+    display: inline-block;
+  }
+  .toc-inner a:hover, .toc-inner a.active {
+    color: var(--bg);
+    background: var(--accent);
+  }
+
+  /* ─── CHAPTER ─── */
+  .chapter {
+    padding-top: 64px;
+  }
+  .chapter-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .chapter-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .chapter-rule {
+    height: 1px;
+    flex: 1;
+    background: var(--border);
+  }
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+  .chapter-intro {
+    font-size: 17px;
+    color: var(--ink2);
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+
+  /* ─── SECTIONS ─── */
+  h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    margin: 48px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h3 .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+  .tag-essential { background: var(--accent);  color: var(--bg); }
+  .tag-power     { background: var(--accent2); color: var(--bg); }
+  .tag-warning   { background: var(--accent);  color: var(--bg); }
+
+  p { margin-bottom: 16px; }
+  p + p { margin-top: -4px; }
+
+  strong { font-weight: 500; }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block {
+    background: var(--dark-code);
+    border-radius: 8px;
+    margin: 24px 0;
+    overflow: hidden;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
+  .code-header {
+    background: var(--dark-header);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--dark-border);
+  }
+  .code-filename {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink3);
+    letter-spacing: 0.05em;
+  }
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .code-dots span {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--dark-border);
+  }
+  .code-dots span:first-child  { background: var(--accent); }
+  .code-dots span:nth-child(2) { background: var(--mac-yellow); }
+  .code-dots span:nth-child(3) { background: var(--accent3); }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--dark-code-fg);
+  }
+  .kw { color: #c084fc; }
+  .st { color: #f5c068; }
+  .cm { color: #6a6560; font-style: italic; }
+  .tp { color: #7ec8e3; }
+  .fn { color: #60d4a8; }
+  .nm { color: var(--dark-code-fg); }
+  .op { color: var(--ink3); }
+
+  /* ─── CALLOUTS ─── */
+  .callout {
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 28px 0;
+    border-left: 4px solid;
+  }
+  .callout-note { background: var(--accent2-bg); border-color: var(--accent2); }
+  .callout-warn { background: var(--accent-bg);  border-color: var(--accent); }
+  .callout-tip  { background: var(--accent3-bg); border-color: var(--accent3); }
+  .callout-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ─── COMPARISON TABLE ─── */
+  .comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .comparison-side {
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .comparison-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+  }
+  .comparison-side.before .comparison-label { background: rgba(200,75,47,0.15);  color: var(--accent); }
+  .comparison-side.after  .comparison-label { background: rgba(42,122,79,0.15);  color: var(--accent3); }
+  .comparison-side pre {
+    padding: 16px;
+    background: var(--dark-code);
+    font-size: 12.5px;
+  }
+
+  /* ─── MENTAL MODEL BOX ─── */
+  .mental-model {
+    background: var(--mental-bg);
+    color: var(--mental-ink);
+    border: 1px solid var(--mental-border);
+    border-radius: 8px;
+    padding: 32px 36px;
+    margin: 32px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .mental-model::before {
+    content: '"';
+    position: absolute;
+    right: 20px;
+    top: -20px;
+    font-family: 'Instrument Serif', serif;
+    font-size: 200px;
+    color: rgba(124,92,191,0.1);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .mental-model-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mental-border);
+    margin-bottom: 16px;
+  }
+  .mental-model p {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    line-height: 1.5;
+    font-style: italic;
+    color: var(--mental-ink);
+    margin-bottom: 12px;
+  }
+  .mental-model p:last-child { margin: 0; }
+  .mental-model .attribution {
+    font-family: 'DM Sans', sans-serif;
+    font-style: normal;
+    font-size: 13px;
+    color: var(--ink3);
+    margin-top: 16px;
+  }
+
+  /* ─── PILL GRID ─── */
+  .pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--dark-code);
+    color: #7ec8e3;
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--dark-border);
+  }
+
+  /* ─── NUMBERED STEPS ─── */
+  .steps {
+    counter-reset: steps;
+    list-style: none;
+    margin: 24px 0;
+  }
+  .steps li {
+    counter-increment: steps;
+    padding: 16px 16px 16px 60px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-bg);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .steps li strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+  .steps li p { margin: 0; font-size: 14px; color: var(--ink2); }
+
+  /* ─── DIVIDER ─── */
+  .chapter-divider {
+    text-align: center;
+    margin: 80px 0 0;
+    padding: 32px 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink3);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── INLINE CODE ─── */
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+
+  /* ─── GOTCHA CARD ─── */
+  .gotcha-card {
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 32px 0;
+  }
+  .gotcha-header {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 12px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gotcha-body {
+    padding: 20px 24px;
+  }
+  .gotcha-body p:last-child { margin: 0; }
+
+  /* ─── SUMMARY TABLE ─── */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  .summary-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--ink);
+    color: var(--bg);
+    border: 1px solid var(--ink);
+  }
+  .summary-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 13px;
+    color: var(--ink2);
+  }
+  .summary-table tr:nth-child(even) td {
+    background: var(--code-bg);
+  }
+  .summary-table td code {
+    font-size: 12px;
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    margin-top: 100px;
+    padding: 32px 0;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink3);
+  }
+
+  @media (max-width: 640px) {
+    .page-wrap { padding: 0 20px 80px; }
+    .comparison { grid-template-columns: 1fr; }
+    .hero-meta { flex-wrap: wrap; gap: 20px; }
+    .hero::before { font-size: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-label">// A Field Guide</div>
+    <h1>Python Typing<br>for <em>ML Engineers</em></h1>
+    <p class="hero-sub">From exploratory scripts to production-grade pipelines. The complete mental model, not just the syntax.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><strong>Audience</strong>ML / MLOps Engineers</div>
+      <div class="hero-meta-item"><strong>Python</strong>3.10+</div>
+      <div class="hero-meta-item"><strong>Approach</strong>Incremental · Opinionated</div>
+      <div class="hero-meta-item"><strong>Chapters</strong>3 + Reference</div>
+    </div>
+  </header>
+
+  <!-- NAV -->
+  <nav class="toc-rail">
+    <div class="toc-inner">
+      <a href="#chapter-why" class="active">01 — Why</a>
+      <a href="#chapter-core">02 — Core 20%</a>
+      <a href="#chapter-depth">03 — Depth</a>
+      <a href="#chapter-gotchas">04 — Gotchas</a>
+      <a href="#chapter-reference">05 — Reference</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════ CHAPTER 1 ═══════════ -->
+  <section class="chapter" id="chapter-why">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 01</span>
+      <div class="chapter-rule"></div>
+    </div>
+    <h2>Why Types? <em>The Real Argument.</em></h2>
+    <p class="chapter-intro">Not "good practice." Not "professional code." The actual reason types pay dividends specifically when you've crossed from data science into ML engineering.</p>
+
+    <div class="mental-model reveal">
+      <div class="mental-model-label">// The Core Insight</div>
+      <p>Data science code has one reader: you, this weekend.<br>Production ML code has one reader: the developer six months from now who has no context, is debugging a pipeline failure, at 11pm, before a model rollout.</p>
+      <p>Types are <em>documentation that cannot lie.</em></p>
+    </div>
+
+    <h3>The ML Engineer's Specific Pain Points</h3>
+
+    <p>Let's be precise. Here's where untyped code <em>specifically</em> hurts in ML engineering:</p>
+
+    <p><strong>Pipeline contracts break silently.</strong> You have a <code>preprocess()</code> function. Someone changes it to return a <code>pd.DataFrame</code> instead of <code>np.ndarray</code>. The function downstream still accepts it — until a specific code path in production hits the wrong branch. Types would have caught this at <em>commit time</em>, not in the post-deployment incident.</p>
+
+    <p><strong>Config objects are the worst offenders.</strong> Untyped config dicts travel across your entire codebase — training scripts, evaluation harnesses, model registries. When a key is renamed, nothing tells you. With typed configs, a key rename is a compiler error across your entire codebase, instantly.</p>
+
+    <p><strong>Model interfaces are implicit contracts.</strong> If you're building a model registry, a serving layer, or an A/B testing harness, you're relying on every model implementing some interface — <code>predict()</code>, <code>transform()</code>, etc. Types let you <em>declare</em> that interface and have it verified, rather than hoping every model implementation "just follows convention."</p>
+
+    <div class="callout callout-note reveal">
+      <div class="callout-label">📌 Note — Runtime vs Static</div>
+      <p>Python types are <strong>not enforced at runtime</strong> by default. They are annotations — hints for static analysis tools (<code>mypy</code>, <code>pyright</code>) and IDEs. Think of them less as constraints and more as a <em>formal specification language</em> you layer on top of Python. You get the benefits through tooling, not through the interpreter.</p>
+    </div>
+
+    <h3>What You Actually Get</h3>
+
+    <p><strong>Refactor confidence.</strong> The single highest-value return from typing. When you need to change a feature engineering function's return shape, or rename a config field, types let you make the change and then run <code>mypy</code> to get a complete list of every callsite that now needs updating. This is transformative in codebases with 20+ modules.</p>
+
+    <p><strong>IDE superpowers.</strong> Autocomplete on return types. Inline documentation from function signatures. "Find all usages" that actually works. In a large ML repo, you'll spend significantly less time reading source to understand what a function does when the signature tells you.</p>
+
+    <p><strong>CI as a safety net.</strong> Once <code>mypy</code> is in your CI pipeline, entire categories of bugs simply cannot reach production. This is the MLOps win: type safety as a gate in your deployment pipeline.</p>
+
+    <div class="callout callout-tip reveal">
+      <div class="callout-label">✦ Strategy — Gradual Adoption</div>
+      <p>You do not type everything at once. The correct strategy is: <strong>type the interfaces first</strong>. Public function signatures, config classes, model contracts. The internals can come later. 30% of typing effort buys you 80% of the safety benefit.</p>
+    </div>
+
+  </section>
+
+  <div class="chapter-divider">§</div>
+
+  <!-- ═══════════ CHAPTER 2 ═══════════ -->
+  <section class="chapter" id="chapter-core">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 02</span>
+      <div class="chapter-rule"></div>
+    </div>
+    <h2>The Core 20% <em>That Does 80% of the Work</em></h2>
+    <p class="chapter-intro">Master these seven constructs and you can type virtually any ML codebase. Everything else is either shorthand or edge cases.</p>
+
+    <!-- 2.1 Basic annotations -->
+    <h3>2.1 — Basic Annotations <span class="tag tag-essential">Essential</span></h3>
+
+    <p>The syntax is minimal. Parameters get <code>: Type</code>, return values get <code>-&gt; Type</code>. That's the entire grammar.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">model_utils.py</div>
+      </div>
+      <pre><span class="cm"># Before: caller has to read the body to know what to pass</span>
+<span class="kw">def</span> <span class="fn">train</span>(df, target, n_estimators, max_depth):
+    ...
+
+<span class="cm"># After: the signature is the documentation</span>
+<span class="kw">def</span> <span class="fn">train</span>(
+    df<span class="op">:</span> <span class="tp">pd.DataFrame</span>,
+    target<span class="op">:</span> <span class="tp">str</span>,
+    n_estimators<span class="op">:</span> <span class="tp">int</span> <span class="op">=</span> <span class="st">100</span>,
+    max_depth<span class="op">:</span> <span class="tp">int</span> <span class="op">|</span> <span class="tp">None</span> <span class="op">=</span> <span class="tp">None</span>,
+) <span class="op">-></span> <span class="tp">RandomForestClassifier</span><span class="op">:</span>
+    ...</pre>
+    </div>
+
+    <p>Use the built-in types directly. On Python 3.9+, lowercase generics work without imports:</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">types_cheatsheet.py</div>
+      </div>
+      <pre><span class="cm"># ✓ Modern (Python 3.9+) — prefer these</span>
+<span class="tp">list</span>[<span class="tp">int</span>]
+<span class="tp">dict</span>[<span class="tp">str</span>, <span class="tp">float</span>]
+<span class="tp">set</span>[<span class="tp">str</span>]
+<span class="tp">tuple</span>[<span class="tp">int</span>, <span class="tp">str</span>, <span class="tp">float</span>]   <span class="cm"># fixed-length, typed positions</span>
+<span class="tp">tuple</span>[<span class="tp">float</span>, <span class="op">...]</span>          <span class="cm"># variable-length, all floats</span>
+
+<span class="cm"># ✗ Old style (pre-3.9) — only if you're stuck on older Python</span>
+<span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">List</span>, <span class="tp">Dict</span>, <span class="tp">Set</span>, <span class="tp">Tuple</span></pre>
+    </div>
+
+    <!-- 2.2 Optional and Union -->
+    <h3>2.2 — Optional and Union <span class="tag tag-essential">Essential</span></h3>
+
+    <p>These appear constantly in ML config and pipeline code. Learn the modern union syntax — it's cleaner and more readable.</p>
+
+    <div class="comparison reveal">
+      <div class="comparison-side before">
+        <div class="comparison-label">✗ Old Syntax</div>
+        <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">Optional</span>, <span class="tp">Union</span>
+
+<span class="kw">def</span> <span class="fn">load</span>(
+  path<span class="op">:</span> <span class="tp">Optional</span>[<span class="tp">str</span>] <span class="op">=</span> <span class="tp">None</span>
+) <span class="op">-></span> <span class="tp">Optional</span>[<span class="tp">Model</span>]:
+    ...
+
+<span class="kw">def</span> <span class="fn">parse</span>(
+  v<span class="op">:</span> <span class="tp">Union</span>[<span class="tp">int</span>, <span class="tp">float</span>]
+) <span class="op">-></span> <span class="tp">float</span>:
+    ...</pre>
+      </div>
+      <div class="comparison-side after">
+        <div class="comparison-label">✓ Modern Syntax (3.10+)</div>
+        <pre><span class="cm"># No imports needed</span>
+
+<span class="kw">def</span> <span class="fn">load</span>(
+  path<span class="op">:</span> <span class="tp">str</span> <span class="op">|</span> <span class="tp">None</span> <span class="op">=</span> <span class="tp">None</span>
+) <span class="op">-></span> <span class="tp">Model</span> <span class="op">|</span> <span class="tp">None</span><span class="op">:</span>
+    ...
+
+<span class="kw">def</span> <span class="fn">parse</span>(
+  v<span class="op">:</span> <span class="tp">int</span> <span class="op">|</span> <span class="tp">float</span>
+) <span class="op">-></span> <span class="tp">float</span>:
+    ...</pre>
+      </div>
+    </div>
+
+    <div class="callout callout-note reveal">
+      <div class="callout-label">📌 Reading Optional Correctly</div>
+      <p><code>str | None</code> doesn't mean "optional parameter." It means <em>the value can be either a string or None</em>. You still need <code>= None</code> to make the parameter itself optional. These are two orthogonal concepts: the type of the value vs. whether the parameter has a default.</p>
+    </div>
+
+    <!-- 2.3 TypedDict -->
+    <h3>2.3 — TypedDict: Typed Config Objects <span class="tag tag-essential">Essential</span></h3>
+
+    <p>If there's one thing ML engineers should adopt immediately, it's replacing raw <code>dict</code> configs with <code>TypedDict</code>. Config dicts are the most common source of runtime errors in ML pipelines, and they're entirely preventable.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">config.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">TypedDict</span>
+
+<span class="cm"># ✗ Untyped: keys can be anything, values can be anything</span>
+<span class="nm">config</span><span class="op">:</span> <span class="tp">dict</span>[<span class="tp">str</span>, <span class="nm">Any</span>] <span class="op">=</span> {<span class="st">"batch_size"</span><span class="op">:</span> <span class="st">32</span>, <span class="st">"lr"</span><span class="op">:</span> <span class="st">0.01</span>}
+
+<span class="cm"># ✓ TypedDict: keys are fixed, types are declared</span>
+<span class="kw">class</span> <span class="tp">TrainingConfig</span>(<span class="tp">TypedDict</span>):
+    batch_size<span class="op">:</span> <span class="tp">int</span>
+    learning_rate<span class="op">:</span> <span class="tp">float</span>
+    model_name<span class="op">:</span> <span class="tp">str</span>
+    early_stopping<span class="op">:</span> <span class="tp">bool</span>
+    checkpoint_dir<span class="op">:</span> <span class="tp">str</span> <span class="op">|</span> <span class="tp">None</span>
+
+<span class="cm"># Still a dict at runtime — no overhead, no changes to call sites</span>
+<span class="nm">config</span><span class="op">:</span> <span class="tp">TrainingConfig</span> <span class="op">=</span> {
+    <span class="st">"batch_size"</span><span class="op">:</span> <span class="st">32</span>,
+    <span class="st">"learning_rate"</span><span class="op">:</span> <span class="st">0.001</span>,
+    <span class="st">"model_name"</span><span class="op">:</span> <span class="st">"xgboost-v2"</span>,
+    <span class="st">"early_stopping"</span><span class="op">:</span> <span class="tp">True</span>,
+    <span class="st">"checkpoint_dir"</span><span class="op">:</span> <span class="st">None</span>,
+}</pre>
+    </div>
+
+    <p>Key insight: <code>TypedDict</code> creates zero runtime overhead. It's still a plain <code>dict</code>. The structure only exists in the type system — but that's exactly where you want it for static analysis.</p>
+
+    <!-- 2.4 Callable -->
+    <h3>2.4 — Callable: Typing Functions as Arguments <span class="tag tag-essential">Essential</span></h3>
+
+    <p>ML pipelines pass transforms, preprocessors, and callbacks as arguments constantly. <code>Callable</code> types these with precision.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">pipeline.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">Callable</span>
+
+<span class="cm"># Callable[[arg_types...], return_type]</span>
+
+<span class="kw">def</span> <span class="fn">build_pipeline</span>(
+    data<span class="op">:</span> <span class="tp">list</span>[<span class="tp">float</span>],
+    transforms<span class="op">:</span> <span class="tp">list</span>[<span class="tp">Callable</span>[[<span class="tp">float</span>], <span class="tp">float</span>]],  <span class="cm"># list of float→float fns</span>
+    on_complete<span class="op">:</span> <span class="tp">Callable</span>[[<span class="tp">str</span>], <span class="tp">None</span>],            <span class="cm"># callback: str → nothing</span>
+) <span class="op">-></span> <span class="tp">list</span>[<span class="tp">float</span>]:
+    <span class="nm">result</span> <span class="op">=</span> <span class="nm">data</span>
+    <span class="kw">for</span> <span class="nm">fn</span> <span class="kw">in</span> <span class="nm">transforms</span><span class="op">:</span>
+        <span class="nm">result</span> <span class="op">=</span> [<span class="fn">fn</span>(<span class="nm">x</span>) <span class="kw">for</span> <span class="nm">x</span> <span class="kw">in</span> <span class="nm">result</span>]
+    <span class="fn">on_complete</span>(<span class="st">"done"</span>)
+    <span class="kw">return</span> <span class="nm">result</span>
+
+<span class="cm"># When signature doesn't matter — use Callable[..., ReturnType]</span>
+<span class="nm">loader</span><span class="op">:</span> <span class="tp">Callable</span>[<span class="op">...</span>, <span class="tp">pd.DataFrame</span>]</pre>
+    </div>
+
+    <!-- 2.5 Literal -->
+    <h3>2.5 — Literal: Constraining String Parameters <span class="tag tag-essential">Essential</span></h3>
+
+    <p>One of the most immediately useful tools. Replace "magic strings" in your pipeline stages, modes, and environment flags with a type that prevents typos at static-check time.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">runner.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">Literal</span>
+
+<span class="kw">type</span> <span class="tp">RunMode</span> <span class="op">=</span> <span class="tp">Literal</span>[<span class="st">"train"</span>, <span class="st">"eval"</span>, <span class="st">"predict"</span>]
+<span class="kw">type</span> <span class="tp">Env</span> <span class="op">=</span> <span class="tp">Literal</span>[<span class="st">"dev"</span>, <span class="st">"staging"</span>, <span class="st">"prod"</span>]
+
+<span class="kw">def</span> <span class="fn">run_experiment</span>(
+    mode<span class="op">:</span> <span class="tp">RunMode</span>,
+    env<span class="op">:</span> <span class="tp">Env</span> <span class="op">=</span> <span class="st">"dev"</span>,
+) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span>
+    ...
+
+<span class="fn">run_experiment</span>(<span class="st">"train"</span>, <span class="st">"prod"</span>)   <span class="cm"># ✓</span>
+<span class="fn">run_experiment</span>(<span class="st">"trn"</span>, <span class="st">"prod"</span>)    <span class="cm"># ✗ mypy: "trn" not in Literal["train","eval","predict"]</span></pre>
+    </div>
+
+    <!-- 2.6 Type Aliases -->
+    <h3>2.6 — Type Aliases: Naming Complex Types <span class="tag tag-essential">Essential</span></h3>
+
+    <p>When your types get complex, don't embed them inline. Name them. This is where types start reading like domain language.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">types.py</div>
+      </div>
+      <pre><span class="cm"># Python 3.12+ — explicit type alias syntax</span>
+<span class="kw">type</span> <span class="tp">Features</span> <span class="op">=</span> <span class="tp">dict</span>[<span class="tp">str</span>, <span class="tp">float</span>]
+<span class="kw">type</span> <span class="tp">Batch</span> <span class="op">=</span> <span class="tp">list</span>[<span class="tp">Features</span>]
+<span class="kw">type</span> <span class="tp">Predictions</span> <span class="op">=</span> <span class="tp">list</span>[<span class="tp">float</span>]
+<span class="kw">type</span> <span class="tp">Transform</span> <span class="op">=</span> <span class="tp">Callable</span>[[<span class="tp">Features</span>], <span class="tp">Features</span>]
+
+<span class="cm"># Now your signatures read like domain language:</span>
+<span class="kw">def</span> <span class="fn">run_batch</span>(
+    batch<span class="op">:</span> <span class="tp">Batch</span>,
+    transforms<span class="op">:</span> <span class="tp">list</span>[<span class="tp">Transform</span>],
+) <span class="op">-></span> <span class="tp">Predictions</span><span class="op">:</span>
+    ...
+
+<span class="cm"># Python 3.10/3.11 — use TypeAlias</span>
+<span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">TypeAlias</span>
+<span class="tp">Features</span><span class="op">:</span> <span class="tp">TypeAlias</span> <span class="op">=</span> <span class="tp">dict</span>[<span class="tp">str</span>, <span class="tp">float</span>]</pre>
+    </div>
+
+    <!-- 2.7 dataclass -->
+    <h3>2.7 — Dataclasses: Upgrade from TypedDict <span class="tag tag-essential">Essential</span></h3>
+
+    <p><code>TypedDict</code> is great for data-as-dicts (e.g., loaded from JSON, passed to APIs). When you want <em>objects with behavior</em>, or defaults, or validation — reach for <code>@dataclass</code>.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">config.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">dataclasses</span> <span class="kw">import</span> <span class="fn">dataclass</span>, <span class="fn">field</span>
+
+<span class="fn">@dataclass</span>
+<span class="kw">class</span> <span class="tp">TrainingConfig</span><span class="op">:</span>
+    model_name<span class="op">:</span> <span class="tp">str</span>
+    batch_size<span class="op">:</span> <span class="tp">int</span> <span class="op">=</span> <span class="st">32</span>
+    learning_rate<span class="op">:</span> <span class="tp">float</span> <span class="op">=</span> <span class="st">1e-3</span>
+    tags<span class="op">:</span> <span class="tp">list</span>[<span class="tp">str</span>] <span class="op">=</span> <span class="fn">field</span>(default_factory<span class="op">=</span><span class="tp">list</span>)  <span class="cm"># ← correct mutable default</span>
+    checkpoint_dir<span class="op">:</span> <span class="tp">str</span> <span class="op">|</span> <span class="tp">None</span> <span class="op">=</span> <span class="tp">None</span>
+
+    <span class="kw">def</span> <span class="fn">experiment_id</span>(<span class="nm">self</span>) <span class="op">-></span> <span class="tp">str</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="sa">f</span><span class="st">"{self.model_name}-bs{self.batch_size}"</span>
+
+<span class="cm"># Constructed like a class — no dict boilerplate</span>
+<span class="nm">cfg</span> <span class="op">=</span> <span class="fn">TrainingConfig</span>(model_name<span class="op">=</span><span class="st">"xgboost"</span>, batch_size<span class="op">=</span><span class="st">64</span>)
+<span class="fn">print</span>(<span class="nm">cfg</span>.<span class="fn">experiment_id</span>())  <span class="cm"># "xgboost-bs64"</span></pre>
+    </div>
+
+    <div class="callout callout-tip reveal">
+      <div class="callout-label">✦ When to use TypedDict vs dataclass</div>
+      <p>Use <strong>TypedDict</strong> when you need to interop with JSON/dicts — e.g., API responses, loaded config files. Use <strong>dataclass</strong> when you want a proper object with methods, defaults, and you control construction. For heavy validation, consider <strong>Pydantic</strong> (which extends this pattern with runtime type-checking).</p>
+    </div>
+
+  </section>
+
+  <div class="chapter-divider">§</div>
+
+  <!-- ═══════════ CHAPTER 3 ═══════════ -->
+  <section class="chapter" id="chapter-depth">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 03</span>
+      <div class="chapter-rule"></div>
+    </div>
+    <h2>Going Deeper <em>Power Constructs</em></h2>
+    <p class="chapter-intro">These are the tools that make typing feel like a first-class design language, not just annotation syntax. You won't need all of these immediately, but you will reach for them.</p>
+
+    <!-- 3.1 Protocol -->
+    <h3>3.1 — Protocol: Structural Typing for ML Interfaces <span class="tag tag-power">Power Tool</span></h3>
+
+    <p>This is arguably the most important advanced construct for ML engineering. <code>Protocol</code> lets you define an interface that <em>any class can satisfy without inheriting from it</em>. This is structural typing, or "typed duck typing."</p>
+
+    <p>The problem it solves: you want to write a model registry that works with sklearn models, PyTorch modules, custom wrappers — without requiring them all to inherit from some base class you control.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">interfaces.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">Protocol</span>
+<span class="kw">import</span> <span class="nm">numpy</span> <span class="kw">as</span> <span class="nm">np</span>
+
+<span class="cm"># Define what "being a model" means — no inheritance required</span>
+<span class="kw">class</span> <span class="tp">Predictor</span>(<span class="tp">Protocol</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">predict</span>(<span class="nm">self</span>, <span class="nm">X</span><span class="op">:</span> <span class="tp">np.ndarray</span>) <span class="op">-></span> <span class="tp">np.ndarray</span><span class="op">:</span> ...
+    <span class="kw">def</span> <span class="fn">predict_proba</span>(<span class="nm">self</span>, <span class="nm">X</span><span class="op">:</span> <span class="tp">np.ndarray</span>) <span class="op">-></span> <span class="tp">np.ndarray</span><span class="op">:</span> ...
+
+<span class="cm"># Your registry works with ANYTHING that satisfies Predictor</span>
+<span class="kw">class</span> <span class="tp">ModelRegistry</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span>
+        <span class="nm">self</span>._models<span class="op">:</span> <span class="tp">dict</span>[<span class="tp">str</span>, <span class="tp">Predictor</span>] <span class="op">=</span> {}
+
+    <span class="kw">def</span> <span class="fn">register</span>(<span class="nm">self</span>, <span class="nm">name</span><span class="op">:</span> <span class="tp">str</span>, <span class="nm">model</span><span class="op">:</span> <span class="tp">Predictor</span>) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span>
+        <span class="nm">self</span>._models[<span class="nm">name</span>] <span class="op">=</span> <span class="nm">model</span>
+
+<span class="cm"># sklearn RandomForest "satisfies" Predictor automatically</span>
+<span class="cm"># Your custom PyTorch wrapper "satisfies" it too</span>
+<span class="cm"># No inheritance. No coupling. Just structural compatibility.</span></pre>
+    </div>
+
+    <div class="callout callout-tip reveal">
+      <div class="callout-label">✦ Protocol vs ABC</div>
+      <p>Abstract Base Classes (<code>ABC</code>) require <em>explicit inheritance</em> — <code>class MyModel(BaseModel)</code>. Protocol requires nothing. If a class has the right methods, it satisfies the protocol. This is far better for ML code where you integrate third-party models you don't own.</p>
+    </div>
+
+    <!-- 3.2 Generics -->
+    <h3>3.2 — Generics: Reusable Typed Utilities <span class="tag tag-power">Power Tool</span></h3>
+
+    <p>Generics let you write functions and classes where the type is a parameter. The canonical example: "this function returns the same type it receives."</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">dataset.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">TypeVar</span>, <span class="tp">Generic</span>
+
+<span class="tp">T</span> <span class="op">=</span> <span class="tp">TypeVar</span>(<span class="st">"T"</span>)
+
+<span class="cm"># Function: return type follows input type</span>
+<span class="kw">def</span> <span class="fn">first</span>(<span class="nm">items</span><span class="op">:</span> <span class="tp">list</span>[<span class="tp">T</span>]) <span class="op">-></span> <span class="tp">T</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="nm">items</span>[<span class="st">0</span>]
+
+<span class="fn">first</span>([<span class="st">1</span>, <span class="st">2</span>, <span class="st">3</span>])           <span class="cm"># inferred return: int</span>
+<span class="fn">first</span>([<span class="st">"a"</span>, <span class="st">"b"</span>])          <span class="cm"># inferred return: str</span>
+
+<span class="cm"># Generic class: a typed data store abstraction</span>
+<span class="kw">class</span> <span class="tp">DataStore</span>(<span class="tp">Generic</span>[<span class="tp">T</span>])<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span>
+        <span class="nm">self</span>._data<span class="op">:</span> <span class="tp">list</span>[<span class="tp">T</span>] <span class="op">=</span> []
+
+    <span class="kw">def</span> <span class="fn">add</span>(<span class="nm">self</span>, <span class="nm">item</span><span class="op">:</span> <span class="tp">T</span>) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span>
+        <span class="nm">self</span>._data.<span class="fn">append</span>(<span class="nm">item</span>)
+
+    <span class="kw">def</span> <span class="fn">get_all</span>(<span class="nm">self</span>) <span class="op">-></span> <span class="tp">list</span>[<span class="tp">T</span>]:
+        <span class="kw">return</span> <span class="nm">self</span>._data
+
+<span class="nm">store</span><span class="op">:</span> <span class="tp">DataStore</span>[<span class="tp">TrainingConfig</span>] <span class="op">=</span> <span class="tp">DataStore</span>()
+<span class="nm">store</span>.<span class="fn">add</span>(<span class="fn">TrainingConfig</span>(model_name<span class="op">=</span><span class="st">"rf"</span>))
+<span class="nm">configs</span> <span class="op">=</span> <span class="nm">store</span>.<span class="fn">get_all</span>()  <span class="cm"># inferred: list[TrainingConfig]</span></pre>
+    </div>
+
+    <!-- 3.3 NewType -->
+    <h3>3.3 — NewType: Semantic Type Safety <span class="tag tag-power">Power Tool</span></h3>
+
+    <p>When two things are both <code>int</code> but should never be confused. This is type safety at the <em>domain semantics</em> level.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">ids.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">NewType</span>
+
+<span class="tp">ExperimentId</span> <span class="op">=</span> <span class="tp">NewType</span>(<span class="st">"ExperimentId"</span>, <span class="tp">int</span>)
+<span class="tp">DatasetId</span>    <span class="op">=</span> <span class="tp">NewType</span>(<span class="st">"DatasetId"</span>,    <span class="tp">int</span>)
+<span class="tp">RunId</span>        <span class="op">=</span> <span class="tp">NewType</span>(<span class="st">"RunId"</span>,        <span class="tp">int</span>)
+
+<span class="kw">def</span> <span class="fn">fetch_run</span>(<span class="nm">run_id</span><span class="op">:</span> <span class="tp">RunId</span>) <span class="op">-></span> <span class="tp">dict</span><span class="op">:</span> ...
+<span class="kw">def</span> <span class="fn">fetch_experiment</span>(<span class="nm">exp_id</span><span class="op">:</span> <span class="tp">ExperimentId</span>) <span class="op">-></span> <span class="tp">dict</span><span class="op">:</span> ...
+
+<span class="nm">run_id</span> <span class="op">=</span> <span class="tp">RunId</span>(<span class="st">42</span>)
+<span class="nm">exp_id</span> <span class="op">=</span> <span class="tp">ExperimentId</span>(<span class="st">7</span>)
+
+<span class="fn">fetch_run</span>(<span class="nm">run_id</span>)          <span class="cm"># ✓</span>
+<span class="fn">fetch_run</span>(<span class="nm">exp_id</span>)          <span class="cm"># ✗ mypy: ExperimentId is not RunId</span>
+<span class="fn">fetch_experiment</span>(<span class="nm">run_id</span>)   <span class="cm"># ✗ caught — mixing IDs is now a type error</span></pre>
+    </div>
+
+    <!-- 3.4 Annotated -->
+    <h3>3.4 — Annotated: Types + Metadata <span class="tag tag-power">Power Tool</span></h3>
+
+    <p>You'll encounter this in FastAPI and Pydantic. <code>Annotated</code> lets you attach arbitrary metadata to a type — documentation, validators, units, constraints — without changing the type itself.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">serving.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">Annotated</span>
+<span class="kw">from</span> <span class="nm">fastapi</span> <span class="kw">import</span> <span class="nm">Query</span>
+
+<span class="cm"># The first arg is the actual type. Everything after is metadata.</span>
+<span class="kw">type</span> <span class="tp">Probability</span> <span class="op">=</span> <span class="tp">Annotated</span>[<span class="tp">float</span>, <span class="st">"must be in [0, 1]"</span>]
+<span class="kw">type</span> <span class="tp">PositiveInt</span> <span class="op">=</span> <span class="tp">Annotated</span>[<span class="tp">int</span>, <span class="st">"must be > 0"</span>]
+
+<span class="cm"># FastAPI uses Annotated to embed validation metadata</span>
+<span class="kw">from</span> <span class="nm">fastapi</span> <span class="kw">import</span> <span class="nm">FastAPI</span>
+<span class="nm">app</span> <span class="op">=</span> <span class="fn">FastAPI</span>()
+
+<span class="fn">@app.get</span>(<span class="st">"/predict"</span>)
+<span class="kw">async def</span> <span class="fn">predict</span>(
+    threshold<span class="op">:</span> <span class="tp">Annotated</span>[<span class="tp">float</span>, <span class="fn">Query</span>(ge<span class="op">=</span><span class="st">0.0</span>, le<span class="op">=</span><span class="st">1.0</span>)] <span class="op">=</span> <span class="st">0.5</span>
+) <span class="op">-></span> <span class="tp">dict</span><span class="op">:</span>
+    ...  <span class="cm"># FastAPI validates threshold is in [0, 1] from the metadata</span></pre>
+    </div>
+
+    <!-- 3.5 overload -->
+    <h3>3.5 — @overload: Multiple Signatures <span class="tag tag-power">Power Tool</span></h3>
+
+    <p>When one function has different return types depending on the arguments. Common in utility functions that handle multiple input formats.</p>
+
+    <div class="code-block reveal">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <div class="code-filename">loader.py</div>
+      </div>
+      <pre><span class="kw">from</span> <span class="nm">typing</span> <span class="kw">import</span> <span class="tp">overload</span>
+
+<span class="fn">@overload</span>
+<span class="kw">def</span> <span class="fn">load_data</span>(<span class="nm">path</span><span class="op">:</span> <span class="tp">str</span>) <span class="op">-></span> <span class="tp">pd.DataFrame</span><span class="op">:</span> ...
+<span class="fn">@overload</span>
+<span class="kw">def</span> <span class="fn">load_data</span>(<span class="nm">path</span><span class="op">:</span> <span class="tp">list</span>[<span class="tp">str</span>]) <span class="op">-></span> <span class="tp">list</span>[<span class="tp">pd.DataFrame</span>]<span class="op">:</span> ...
+
+<span class="kw">def</span> <span class="fn">load_data</span>(<span class="nm">path</span>):  <span class="cm"># actual implementation (untyped)</span>
+    <span class="kw">if</span> <span class="fn">isinstance</span>(<span class="nm">path</span>, <span class="tp">str</span>)<span class="op">:</span>
+        <span class="kw">return</span> <span class="nm">pd</span>.<span class="fn">read_csv</span>(<span class="nm">path</span>)
+    <span class="kw">return</span> [<span class="nm">pd</span>.<span class="fn">read_csv</span>(<span class="nm">p</span>) <span class="kw">for</span> <span class="nm">p</span> <span class="kw">in</span> <span class="nm">path</span>]
+
+<span class="cm"># Callers get the right return type inferred:</span>
+<span class="nm">df</span>   <span class="op">=</span> <span class="fn">load_data</span>(<span class="st">"data.csv"</span>)        <span class="cm"># → pd.DataFrame</span>
+<span class="nm">dfs</span>  <span class="op">=</span> <span class="fn">load_data</span>([<span class="st">"a.csv"</span>, <span class="st">"b.csv"</span>]) <span class="cm"># → list[pd.DataFrame]</span></pre>
+    </div>
+
+  </section>
+
+  <div class="chapter-divider">§</div>
+
+  <!-- ═══════════ CHAPTER 4 ═══════════ -->
+  <section class="chapter" id="chapter-gotchas">
+    <div class="chapter-header">
+      <span class="chapter-num">Chapter 04</span>
+      <div class="chapter-rule"></div>
+    </div>
+    <h2>Gotchas &amp; <em>Hard-Won Lessons</em></h2>
+    <p class="chapter-intro">The things that will bite you if nobody warns you. Read these before you start typing your first module.</p>
+
+    <div class="gotcha-card reveal">
+      <div class="gotcha-header">⚠ Gotcha #1 — Types Don't Enforce at Runtime</div>
+      <div class="gotcha-body">
+        <p>The single most important thing to understand: Python's type annotations are <strong>not enforced by the interpreter</strong>. This will run without error:</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-filename">example.py</div></div>
+          <pre><span class="kw">def</span> <span class="fn">square</span>(<span class="nm">x</span><span class="op">:</span> <span class="tp">int</span>) <span class="op">-></span> <span class="tp">int</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="nm">x</span> <span class="op">*</span> <span class="nm">x</span>
+
+<span class="fn">square</span>(<span class="st">"oh no"</span>)  <span class="cm"># ← Python runs this fine. "oh noh no" is the result.</span>
+<span class="cm"># mypy catches it. The runtime doesn't.</span></pre>
+        </div>
+        <p>Types are a <em>static analysis tool</em>. Their value comes from running <code>mypy</code> / <code>pyright</code> in your CI pipeline, not from Python itself. If you want runtime enforcement, use Pydantic.</p>
+      </div>
+    </div>
+
+    <div class="gotcha-card reveal">
+      <div class="gotcha-header">⚠ Gotcha #2 — Mutable Default Arguments Are Still Broken</div>
+      <div class="gotcha-body">
+        <p>Types don't fix one of Python's oldest footguns: mutable default arguments are shared across all calls.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-filename">example.py</div></div>
+          <pre><span class="cm"># ✗ Classic bug — one list shared across ALL calls</span>
+<span class="kw">def</span> <span class="fn">add_feature</span>(<span class="nm">name</span><span class="op">:</span> <span class="tp">str</span>, <span class="nm">features</span><span class="op">:</span> <span class="tp">list</span>[<span class="tp">str</span>] <span class="op">=</span> []) <span class="op">-></span> <span class="tp">list</span>[<span class="tp">str</span>]<span class="op">:</span>
+    <span class="nm">features</span>.<span class="fn">append</span>(<span class="nm">name</span>)
+    <span class="kw">return</span> <span class="nm">features</span>
+
+<span class="cm"># ✓ Correct pattern — use None sentinel</span>
+<span class="kw">def</span> <span class="fn">add_feature</span>(<span class="nm">name</span><span class="op">:</span> <span class="tp">str</span>, <span class="nm">features</span><span class="op">:</span> <span class="tp">list</span>[<span class="tp">str</span>] <span class="op">|</span> <span class="tp">None</span> <span class="op">=</span> <span class="tp">None</span>) <span class="op">-></span> <span class="tp">list</span>[<span class="tp">str</span>]<span class="op">:</span>
+    <span class="nm">features</span> <span class="op">=</span> <span class="nm">features</span> <span class="kw">if</span> <span class="nm">features</span> <span class="kw">is not</span> <span class="tp">None</span> <span class="kw">else</span> []
+    <span class="nm">features</span>.<span class="fn">append</span>(<span class="nm">name</span>)
+    <span class="kw">return</span> <span class="nm">features</span>
+
+<span class="cm"># With dataclasses — use field(default_factory=list)</span>
+<span class="kw">from</span> <span class="nm">dataclasses</span> <span class="kw">import</span> <span class="fn">dataclass</span>, <span class="fn">field</span>
+
+<span class="fn">@dataclass</span>
+<span class="kw">class</span> <span class="tp">Config</span><span class="op">:</span>
+    tags<span class="op">:</span> <span class="tp">list</span>[<span class="tp">str</span>] <span class="op">=</span> <span class="fn">field</span>(default_factory<span class="op">=</span><span class="tp">list</span>)  <span class="cm"># ← correct</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="gotcha-card reveal">
+      <div class="gotcha-header">⚠ Gotcha #3 — Covariance and Lists</div>
+      <div class="gotcha-body">
+        <p>A <code>list[Dog]</code> is NOT a <code>list[Animal]</code>, even if <code>Dog</code> is a subclass of <code>Animal</code>. This surprises most people. (It's correct behavior — adding a Cat to a <code>list[Dog]</code> via an <code>Animal</code> reference would be a bug.)</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-filename">example.py</div></div>
+          <pre><span class="kw">def</span> <span class="fn">process_animals</span>(<span class="nm">animals</span><span class="op">:</span> <span class="tp">list</span>[<span class="tp">Animal</span>]) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span> ...
+
+<span class="nm">dogs</span><span class="op">:</span> <span class="tp">list</span>[<span class="tp">Dog</span>] <span class="op">=</span> [<span class="fn">Dog</span>(), <span class="fn">Dog</span>()]
+<span class="fn">process_animals</span>(<span class="nm">dogs</span>)  <span class="cm"># ✗ mypy error!</span>
+
+<span class="cm"># Solution: use Sequence[Animal] (read-only) for covariant use</span>
+<span class="kw">from</span> <span class="nm">collections.abc</span> <span class="kw">import</span> <span class="tp">Sequence</span>
+
+<span class="kw">def</span> <span class="fn">process_animals</span>(<span class="nm">animals</span><span class="op">:</span> <span class="tp">Sequence</span>[<span class="tp">Animal</span>]) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span> ...
+<span class="cm"># ✓ Sequence is covariant — list[Dog] accepted</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="gotcha-card reveal">
+      <div class="gotcha-header">⚠ Gotcha #4 — Any Is a Supertype AND Subtype</div>
+      <div class="gotcha-body">
+        <p><code>Any</code> turns off type checking <em>in both directions</em>. It's assignable to everything and everything is assignable to it. This means one careless <code>Any</code> can silently propagate through your entire call graph — it "infects" types.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-filename">example.py</div></div>
+          <pre><span class="kw">def</span> <span class="fn">parse_config</span>(<span class="nm">raw</span><span class="op">:</span> <span class="tp">Any</span>) <span class="op">-></span> <span class="tp">Any</span><span class="op">:</span>     <span class="cm"># ← Any escapes here</span>
+    <span class="kw">return</span> <span class="nm">raw</span>[<span class="st">"settings"</span>]
+
+<span class="nm">config</span> <span class="op">=</span> <span class="fn">parse_config</span>(<span class="nm">raw_json</span>)       <span class="cm"># config: Any (type info is gone)</span>
+<span class="nm">lr</span> <span class="op">=</span> <span class="nm">config</span>[<span class="st">"learning_rate"</span>]           <span class="cm"># lr: Any (still lost)</span>
+<span class="nm">model</span> <span class="op">=</span> <span class="fn">train</span>(lr<span class="op">=</span><span class="nm">lr</span>)                   <span class="cm"># no type errors, but no safety either</span>
+
+<span class="cm"># Better — isolate Any at the boundary, then narrow immediately</span>
+<span class="kw">import</span> <span class="nm">json</span>
+
+<span class="kw">def</span> <span class="fn">parse_config</span>(<span class="nm">raw</span><span class="op">:</span> <span class="tp">str</span>) <span class="op">-></span> <span class="tp">TrainingConfig</span><span class="op">:</span>
+    <span class="nm">data</span><span class="op">:</span> <span class="tp">Any</span> <span class="op">=</span> <span class="nm">json</span>.<span class="fn">loads</span>(<span class="nm">raw</span>)          <span class="cm"># Any stays local</span>
+    <span class="kw">return</span> <span class="tp">TrainingConfig</span>(               <span class="cm"># ← re-typed immediately</span>
+        batch_size<span class="op">=</span><span class="nm">data</span>[<span class="st">"batch_size"</span>],
+        learning_rate<span class="op">=</span><span class="nm">data</span>[<span class="st">"learning_rate"</span>],
+        model_name<span class="op">=</span><span class="nm">data</span>[<span class="st">"model_name"</span>],
+    )</pre>
+        </div>
+        <p>Rule of thumb: <strong>Any should exist at the boundary</strong> (I/O, external libraries) and be immediately narrowed into typed structures. Never let it flow inward.</p>
+      </div>
+    </div>
+
+    <div class="gotcha-card reveal">
+      <div class="gotcha-header">⚠ Gotcha #5 — NumPy and Pandas Typing Is Imperfect</div>
+      <div class="gotcha-body">
+        <p>The elephant in the room for ML engineers. <code>np.ndarray</code> typing doesn't encode shape or dtype. <code>pd.DataFrame</code> typing doesn't encode column names or types. This is a known limitation of the ecosystem.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-filename">example.py</div></div>
+          <pre><span class="cm"># This is all mypy knows:</span>
+<span class="kw">def</span> <span class="fn">encode_features</span>(<span class="nm">X</span><span class="op">:</span> <span class="tp">np.ndarray</span>) <span class="op">-></span> <span class="tp">np.ndarray</span><span class="op">:</span>
+    ...  <span class="cm"># shape and dtype: not encoded in the type</span>
+
+<span class="cm"># For richer numpy typing — use numpy.typing</span>
+<span class="kw">import</span> <span class="nm">numpy</span> <span class="kw">as</span> <span class="nm">np</span>
+<span class="kw">from</span> <span class="nm">numpy.typing</span> <span class="kw">import</span> <span class="tp">NDArray</span>
+
+<span class="kw">def</span> <span class="fn">encode_features</span>(<span class="nm">X</span><span class="op">:</span> <span class="tp">NDArray</span>[<span class="nm">np</span>.<span class="tp">float64</span>]) <span class="op">-></span> <span class="tp">NDArray</span>[<span class="nm">np</span>.<span class="tp">float64</span>]<span class="op">:</span>
+    ...  <span class="cm"># at least dtype is now encoded</span>
+
+<span class="cm"># For shape-safe numpy — consider beartype or jaxtyping in serious codebases</span></pre>
+        </div>
+        <p>Be pragmatic. Don't let the imperfection of array typing discourage you from typing everything else. The value comes from typing your pipeline interfaces, not individual array shapes.</p>
+      </div>
+    </div>
+
+    <div class="gotcha-card reveal">
+      <div class="gotcha-header">⚠ Gotcha #6 — Forward References Need Quotes (or __future__)</div>
+      <div class="gotcha-body">
+        <p>If a type is referenced before it's defined in the file (common in mutually recursive types or self-referential classes), Python will raise a <code>NameError</code> at import time — unless you quote it or use <code>from __future__ import annotations</code>.</p>
+        <div class="code-block">
+          <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><div class="code-filename">example.py</div></div>
+          <pre><span class="cm"># Option 1: quote the forward reference</span>
+<span class="kw">class</span> <span class="tp">Node</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>, <span class="nm">children</span><span class="op">:</span> <span class="tp">list</span>[<span class="st">"Node"</span>]) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span>
+        ...
+
+<span class="cm"># Option 2: PEP 563 — all annotations become lazy strings</span>
+<span class="kw">from</span> <span class="nm">__future__</span> <span class="kw">import</span> <span class="nm">annotations</span>  <span class="cm"># put at top of file</span>
+
+<span class="kw">class</span> <span class="tp">Node</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="nm">self</span>, <span class="nm">children</span><span class="op">:</span> <span class="tp">list</span>[<span class="tp">Node</span>]) <span class="op">-></span> <span class="tp">None</span><span class="op">:</span>  <span class="cm"># no quotes needed</span>
+        ...</pre>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="chapter-divider">§</div>
+
+  <!-- ═══════════ CHAPTER 5 — REFERENCE ═══════════ -->
+  <section class="chapter" id="chapter-reference">
+    <div class="chapter-header">
+      <span class="chapter-num">Reference</span>
+      <div class="chapter-rule"></div>
+    </div>
+    <h2>Quick Reference <em>&amp; Learning Path</em></h2>
+
+    <h3>The Type You Should Reach For First</h3>
+
+    <table class="summary-table reveal">
+      <thead>
+        <tr>
+          <th>Situation</th>
+          <th>Reach For</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Function params / return values</td>
+          <td><code>int</code>, <code>str</code>, <code>list[X]</code>, <code>dict[K,V]</code></td>
+          <td>Always start here</td>
+        </tr>
+        <tr>
+          <td>Value may be absent</td>
+          <td><code>X | None</code></td>
+          <td>Replaces Optional[X]</td>
+        </tr>
+        <tr>
+          <td>Value can be one of several types</td>
+          <td><code>X | Y | Z</code></td>
+          <td>Replaces Union[X, Y, Z]</td>
+        </tr>
+        <tr>
+          <td>Config / structured dicts</td>
+          <td><code>TypedDict</code> or <code>@dataclass</code></td>
+          <td>TypedDict for JSON-origin, dataclass for constructed objects</td>
+        </tr>
+        <tr>
+          <td>Function as argument</td>
+          <td><code>Callable[[ArgTypes], ReturnType]</code></td>
+          <td>Transforms, callbacks, pipelines</td>
+        </tr>
+        <tr>
+          <td>Fixed string choices / modes</td>
+          <td><code>Literal["a", "b", "c"]</code></td>
+          <td>Pipeline stages, environments, modes</td>
+        </tr>
+        <tr>
+          <td>Model interface (no inheritance)</td>
+          <td><code>Protocol</code></td>
+          <td>Best for third-party model integration</td>
+        </tr>
+        <tr>
+          <td>Reusable typed utility</td>
+          <td><code>TypeVar</code> + <code>Generic</code></td>
+          <td>Data stores, loaders, registries</td>
+        </tr>
+        <tr>
+          <td>Semantically distinct int/str IDs</td>
+          <td><code>NewType</code></td>
+          <td>Prevents mixing experiment/run/dataset IDs</td>
+        </tr>
+        <tr>
+          <td>NumPy arrays</td>
+          <td><code>NDArray[np.float64]</code></td>
+          <td>from numpy.typing — dtype encoded, shape not</td>
+        </tr>
+        <tr>
+          <td>FastAPI / Pydantic integration</td>
+          <td><code>Annotated[Type, metadata]</code></td>
+          <td>Types + validation constraints</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>A Realistic 3-Week Adoption Plan</h3>
+
+    <ol class="steps reveal">
+      <li>
+        <strong>Week 1 — Type the interfaces</strong>
+        <p>Add type hints to all public function signatures in one service or module. Don't touch the internals yet. Replace any raw config dicts with <code>TypedDict</code> or <code>@dataclass</code>. Run <code>mypy</code> locally and fix the warnings it surfaces.</p>
+      </li>
+      <li>
+        <strong>Week 2 — Type the contracts</strong>
+        <p>Introduce <code>Protocol</code> wherever you have implicit model interfaces. Replace <code>Any</code> usages with proper types where possible. Add <code>Literal</code> for string-enum parameters. Add type aliases for complex types to improve readability.</p>
+      </li>
+      <li>
+        <strong>Week 3 — Enforce in CI</strong>
+        <p>Add <code>mypy --strict</code> to your CI pipeline on core modules. Enable it progressively: strict on interfaces first, lenient on internals. This is the point where types start providing compounding returns — every future commit gets checked automatically.</p>
+      </li>
+    </ol>
+
+    <h3>Tooling Stack</h3>
+
+    <div class="pill-grid reveal">
+      <span class="pill">mypy</span>
+      <span class="pill">pyright</span>
+      <span class="pill">ruff</span>
+      <span class="pill">beartype</span>
+      <span class="pill">pydantic</span>
+      <span class="pill">numpy.typing</span>
+      <span class="pill">pandas-stubs</span>
+    </div>
+
+    <p><strong>mypy</strong> is the standard, battle-tested static checker. <strong>pyright</strong> (from Microsoft) is faster and often stricter — used by Pylance in VSCode. Run at least one in CI. <strong>beartype</strong> provides <em>runtime</em> type enforcement when you genuinely need it. <strong>pandas-stubs</strong> installs community type stubs for Pandas to improve mypy accuracy.</p>
+
+    <div class="mental-model reveal">
+      <div class="mental-model-label">// The Final Mental Model Shift</div>
+      <p>Untyped code describes <em>what runs.</em></p>
+      <p>Typed code describes <em>what is true.</em></p>
+      <p>The gap between those two things is where production bugs live.</p>
+      <div class="attribution">— Types as formal specification, not as constraint</div>
+    </div>
+
+  </section>
+
+</div>
+
+<footer>
+  <span>Python Typing — Field Guide for ML Engineers</span>
+  <span>Python 3.10+ · mypy · pyright</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Nav active state
+  const sections = document.querySelectorAll('.chapter[id]');
+  const navLinks = document.querySelectorAll('.toc-inner a');
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.toc-inner a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => navObserver.observe(s));
+</script>
+</body>
+</html>

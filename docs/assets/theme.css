@@ -1,0 +1,57 @@
+/*
+ * Central theme — auto-injected into all HTML notes by the MkDocs build hook.
+ * Edit here to change colours / tokens across every note simultaneously.
+ *
+ * Variables are injected AFTER each file's own <style> block so these
+ * definitions take precedence via CSS cascade.
+ */
+
+/* ─── Light mode (default) ─────────────────────────────────────────────── */
+:root {
+  --bg:           #f7f5f0;
+  --surface:      #fffefb;
+  --ink:          #1a1816;
+  --ink2:         #4a4540;
+  --ink3:         #8a8278;
+  --accent:       #c84b2f;
+  --accent2:      #2a5f8f;
+  --accent3:      #2a7a4f;
+  --border:       rgba(26, 24, 22, 0.1);
+  --border2:      rgba(26, 24, 22, 0.06);
+  --yellow:       #f5e6a3;
+  --yellow-ink:   #7a5c00;
+  --code-bg:      #f0ede6;
+
+  /* mental-model block — some files use these */
+  --mental-bg:     #f0edf8;
+  --mental-border: #7c5cbf;
+  --mental-ink:    #3a2060;
+}
+
+/* ─── Dark mode — follows OS preference ────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:           #1a1816;
+    --surface:      #1e1c1a;
+    --ink:          #d4cfc8;
+    --ink2:         #8a8278;
+    --ink3:         #6a6560;
+    --accent:       #d4634a;
+    --accent2:      #5b90c0;
+    --accent3:      #4a9a6a;
+    --border:       rgba(212, 207, 200, 0.12);
+    --border2:      rgba(212, 207, 200, 0.06);
+    --yellow:       #332b0e;
+    --yellow-ink:   #d4a830;
+    --code-bg:      #242220;
+
+    --mental-bg:     #1e1a2a;
+    --mental-border: #9b7fd4;
+    --mental-ink:    #c4b0e8;
+  }
+
+  /* Scrollbar — warm dark */
+  ::-webkit-scrollbar              { background: #1a1816; }
+  ::-webkit-scrollbar-thumb        { background: #3a3632; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover  { background: #4a4540; }
+}
