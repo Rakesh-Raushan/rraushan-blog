@@ -97,6 +97,9 @@ def on_nav(nav, config, files, **kwargs):
             url = f"/{folder}/{html_file.name}"
             item.children.append(Link(title=title, url=url))
 
+    # Portfolio is a standalone page — insert after Blog (index 0)
+    nav.items.insert(1, Link(title="Portfolio", url="/portfolio/"))
+
     return nav
 
 

@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weight Initialization in DL</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f5f0;
+  --surface: #fffefb;
+  --ink: #1a1816;
+  --ink2: #4a4540;
+  --ink3: #8a8278;
+  --accent: #c84b2f;
+  --accent2: #2a5f8f;
+  --accent3: #2a7a4f;
+  --border: rgba(26,24,22,0.1);
+  --border2: rgba(26,24,22,0.06);
+  --code-bg: #f0ede6;
+  --mental-bg: #f0edf8;
+  --mental-border: #7c5cbf;
+  --mental-ink: #3a2060;
+  --dark-code: #1e1c1a;
+  --dark-code-fg: #d4cfc8;
+  --dark-border: rgba(255,255,255,0.08);
+  --accent-bg: rgba(200,75,47,0.07);
+  --accent-bd: rgba(200,75,47,0.2);
+  --accent2-bg: rgba(42,95,143,0.07);
+  --accent2-bd: rgba(42,95,143,0.2);
+  --accent3-bg: rgba(42,122,79,0.07);
+  --accent3-bd: rgba(42,122,79,0.2);
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.75;
+  font-size: 15px;
+  overflow-x: hidden;
+}
+
+/* ── Hero ── */
+.hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40%; left: -20%;
+  width: 140%; height: 180%;
+  background: radial-gradient(ellipse at 30% 50%, var(--accent-bg) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 60%, var(--accent2-bg) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-chip {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
+  position: relative;
+  color: var(--ink);
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero p {
+  font-size: 1.15rem;
+  color: var(--ink3);
+  max-width: 560px;
+  position: relative;
+}
+
+/* ── Container ── */
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 32px 96px;
+}
+
+/* ── Section ── */
+.section {
+  margin-bottom: 5rem;
+}
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.section h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: var(--ink);
+}
+.section p, .section li {
+  color: var(--ink2);
+  font-size: 1.05rem;
+}
+.section p { margin-bottom: 1rem; }
+
+/* ── Analogy Card ── */
+.analogy {
+  background: var(--accent3-bg);
+  border: 1px solid var(--accent3-bd);
+  border-radius: var(--radius);
+  padding: 1.8rem 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+.analogy::before {
+  content: '💡';
+  font-size: 1.4rem;
+  position: absolute;
+  top: -14px; left: 20px;
+  background: var(--bg);
+  padding: 0 8px;
+}
+.analogy strong { color: var(--accent3); }
+.analogy p { color: var(--ink2); margin-bottom: 0.5rem; }
+.analogy p:last-child { margin-bottom: 0; }
+
+/* ── Problems Grid ── */
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.problem-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: border-color 0.3s;
+}
+.problem-card:hover { border-color: var(--accent); }
+.problem-card .icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+.problem-card h4 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--accent); }
+.problem-card p { font-size: 0.9rem; color: var(--ink3); margin: 0; }
+
+/* ── Timeline ── */
+.timeline {
+  position: relative;
+  margin: 2.5rem 0;
+  padding-left: 36px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent2), var(--accent3));
+  border-radius: 2px;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -30px; top: 6px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--accent3);
+  background: var(--bg);
+}
+.timeline-item:nth-child(1)::before { border-color: var(--accent); }
+.timeline-item:nth-child(2)::before { border-color: var(--accent2); }
+.timeline-item:nth-child(3)::before { border-color: var(--accent3); }
+.timeline-item .year {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent2);
+  letter-spacing: 0.06em;
+}
+.timeline-item h4 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.3rem;
+  margin: 0.2rem 0 0.4rem;
+  color: var(--ink);
+}
+.timeline-item p { font-size: 0.95rem; color: var(--ink3); }
+
+/* ── Interactive Viz ── */
+.viz-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin: 2rem 0;
+}
+.viz-container h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+  color: var(--ink);
+}
+.viz-subtitle { color: var(--ink3); font-size: 0.9rem; margin-bottom: 1.2rem; }
+
+canvas {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+.controls label {
+  font-size: 0.85rem;
+  color: var(--ink3);
+  font-family: 'DM Mono', monospace;
+}
+.controls select, .controls button {
+  background: var(--code-bg);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.controls select:hover, .controls button:hover {
+  border-color: var(--accent);
+}
+.controls button {
+  background: var(--accent-bg);
+  border-color: var(--accent-bd);
+  color: var(--accent);
+}
+
+/* ── Derivation ── */
+.derivation {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 2rem 0;
+}
+.derivation-header {
+  padding: 1rem 1.5rem;
+  background: var(--code-bg);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+.derivation-header h4 {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--accent2);
+}
+.derivation-header .toggle {
+  font-size: 1.2rem;
+  color: var(--ink3);
+  transition: transform 0.3s;
+}
+.derivation-body {
+  padding: 0 1.5rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+}
+.derivation-body.open {
+  max-height: 1200px;
+  padding: 1.2rem 1.5rem;
+}
+.derivation-body .step {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+}
+.derivation-body .step-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent3);
+  background: var(--accent3-bg);
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.derivation-body .step p {
+  font-size: 0.92rem;
+  color: var(--ink3);
+  margin: 0;
+}
+.math {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.88em;
+  color: var(--accent2);
+  background: var(--accent2-bg);
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline;
+  white-space: nowrap;
+}
+.math-block {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.92rem;
+  color: var(--accent2);
+  background: var(--accent2-bg);
+  padding: 12px 18px;
+  border-radius: 8px;
+  border-left: 3px solid var(--accent2);
+  margin: 1rem 0;
+  display: block;
+  overflow-x: auto;
+}
+
+/* ── Comparison Table ── */
+.comparison {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 2rem 0;
+}
+.comparison table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.comparison th {
+  background: var(--code-bg);
+  padding: 12px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+  color: var(--ink3);
+  border-bottom: 1px solid var(--border);
+}
+.comparison td {
+  padding: 12px 16px;
+  font-size: 0.92rem;
+  border-bottom: 1px solid var(--border2);
+  color: var(--ink3);
+}
+.comparison tr:last-child td { border-bottom: none; }
+.comparison td:first-child { color: var(--ink); font-weight: 500; }
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-family: 'DM Mono', monospace;
+}
+.tag-green  { background: var(--accent3-bg); color: var(--accent3); }
+.tag-blue   { background: var(--accent2-bg); color: var(--accent2); }
+.tag-purple { background: var(--mental-bg);  color: var(--mental-border); }
+.tag-yellow { background: var(--accent-bg);  color: var(--accent); }
+
+/* ── Cheat Sheet ── */
+.cheat-sheet {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin: 2rem 0;
+}
+.cheat-sheet h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+  color: var(--ink);
+}
+.qa {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.qa:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.qa-q {
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+  font-size: 1rem;
+}
+.qa-q::before {
+  content: 'Q:';
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  margin-right: 6px;
+}
+.qa-a {
+  color: var(--ink3);
+  font-size: 0.95rem;
+  padding-left: 1.5rem;
+}
+
+/* ── Code Block ── */
+.code-block {
+  background: var(--dark-code);
+  border: 1px solid var(--dark-border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  overflow-x: auto;
+  margin: 1.2rem 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: var(--dark-code-fg);
+}
+.code-block .comment { color: #6a6560; font-style: italic; }
+.code-block .fn      { color: #60d4a8; }
+.code-block .str     { color: #f5c068; }
+.code-block .kw      { color: #c084fc; }
+
+/* ── Key Principle ── */
+.principle {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  margin: 2rem 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  position: relative;
+}
+.principle::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent-bg), var(--accent3-bg));
+  pointer-events: none;
+}
+.principle p {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.4rem;
+  color: var(--ink);
+  position: relative;
+  z-index: 1;
+}
+.principle p em { color: var(--accent3); font-style: italic; }
+
+/* ── Decision Tree SVG ── */
+.decision-tree-wrap {
+  margin: 2rem 0;
+  overflow-x: auto;
+}
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  font-size: 0.85rem;
+  color: var(--ink3);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2.2rem; }
+  .controls { flex-direction: column; align-items: stretch; }
+  .comparison { overflow-x: auto; }
+  .comparison table { min-width: 500px; }
+}
+</style>
+  <link rel="stylesheet" href="/assets/theme.css">
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-chip">Chapter 5 · Deep Learning Fundamentals</div>
+  <h1>Weight <em>Initialization</em></h1>
+  <p>Why the starting values of your neural network's weights decide if it learns at all — and how to get them right.</p>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ CORE IDEA ═══════════════ -->
+<div class="section">
+  <div class="section-label">01 — Core Idea</div>
+  <h2>Why Starting Values Matter</h2>
+  <p>Before a neural network learns anything, every weight must be given an initial value. This isn't just a technicality — it's the difference between a network that converges in minutes and one that never learns at all.</p>
+
+  <div class="analogy">
+    <strong>Think of it like tuning a guitar.</strong>
+    <p>If every string starts wildly out of tune, the musician (optimizer) has to make huge corrections that may overshoot. If every string starts at the exact same note, you can't play a chord — you need <em>variety</em>. The ideal: each string starts close to its correct pitch, with just enough variation.</p>
+  </div>
+
+  <div class="principle">
+    <p>The golden rule: keep activation variance ≈ <em>constant</em> across every layer.</p>
+  </div>
+
+  <p>If variance shrinks layer by layer, gradients <strong>vanish</strong> (network stops learning). If variance grows, gradients <strong>explode</strong> (network becomes unstable). Good initialization keeps the signal stable as it flows forward and backward.</p>
+
+  <div class="problems-grid">
+    <div class="problem-card">
+      <div class="icon">🪞</div>
+      <h4>Symmetry</h4>
+      <p>All weights identical → all neurons compute the same thing → network collapses to 1 neuron per layer.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">📉</div>
+      <h4>Vanishing Gradients</h4>
+      <p>Weights too small → activations shrink exponentially through layers → deep layers never update.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">💥</div>
+      <h4>Exploding Gradients</h4>
+      <p>Weights too large → activations blow up → loss becomes NaN, training crashes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ INTERACTIVE SIGNAL VIZ ═══════════════ -->
+<div class="section">
+  <div class="section-label">02 — See It Happen</div>
+  <h2>How Signals Flow Through Layers</h2>
+  <p>Watch what happens to the activation distribution as a signal passes through a 10-layer network with different init schemes. Each bar shows the spread (variance) of activations at that layer.</p>
+
+  <div class="viz-container">
+    <h3>Activation Variance Across Layers</h3>
+    <p class="viz-subtitle">See how different initializations affect signal propagation</p>
+    <canvas id="varianceCanvas" height="280"></canvas>
+    <div class="controls">
+      <label>Init Scheme:</label>
+      <select id="initSelect">
+        <option value="tiny">Too Small (σ=0.01)</option>
+        <option value="xavier" selected>Xavier/Glorot</option>
+        <option value="he">He/Kaiming</option>
+        <option value="large">Too Large (σ=2.0)</option>
+      </select>
+      <label>Activation:</label>
+      <select id="actSelect">
+        <option value="tanh">tanh</option>
+        <option value="relu">ReLU</option>
+      </select>
+      <button id="runBtn">▶ Simulate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ HISTORY ═══════════════ -->
+<div class="section">
+  <div class="section-label">03 — Evolution</div>
+  <h2>A Brief History</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="year">Pre-2010 — The Dark Ages</div>
+      <h4>Small Random</h4>
+      <p>Weights drawn from <span class="math">N(0, 0.01)</span>. Worked for 2–3 layer nets. Deeper? Gradients vanished — activations shrank to zero by layer 5.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="year">2010 — Glorot & Bengio</div>
+      <h4>Xavier / Glorot Init</h4>
+      <p>Insight: balance the variance for both forward and backward passes. For a layer with <span class="math">n_in</span> inputs and <span class="math">n_out</span> outputs, average them:</p>
+      <div class="math-block">Var(W) = 2 / (n_in + n_out)</div>
+      <p>Designed for <strong>sigmoid / tanh</strong> (approximately linear near zero). Broke for ReLU, which kills half the signal.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="year">2015 — He et al.</div>
+      <h4>He / Kaiming Init</h4>
+      <p>ReLU zeros out ~50% of values, so variance drops by half each layer. Fix: double the variance.</p>
+      <div class="math-block">Var(W) = 2 / n_in</div>
+      <p>That factor of <strong>2</strong> is the entire difference. Enabled ResNet-50 and beyond.</p>
+    </div>
+  </div>
+
+  <!-- Collapsible Derivation -->
+  <div class="derivation" id="derivXavier">
+    <div class="derivation-header" onclick="toggleDeriv('derivXavier')">
+      <h4>📐 Xavier Derivation (tap to expand)</h4>
+      <span class="toggle">+</span>
+    </div>
+    <div class="derivation-body">
+      <div class="step"><span class="step-num">1</span><p>Linear layer: <span class="math">y_j = Σ W_ji × x_i</span> (sum over n_in inputs)</p></div>
+      <div class="step"><span class="step-num">2</span><p>Assume inputs are i.i.d. with Var(x)=1, zero mean, and W independent of x.</p></div>
+      <div class="step"><span class="step-num">3</span><p>Then <span class="math">Var(y) = n_in × Var(W)</span> (variance of a sum of independent products).</p></div>
+      <div class="step"><span class="step-num">4</span><p>Want Var(y) = 1 (same as input) → set <span class="math">Var(W) = 1/n_in</span>.</p></div>
+      <div class="step"><span class="step-num">5</span><p>Backward pass gives the same constraint but with n_out → <span class="math">Var(W) = 1/n_out</span>.</p></div>
+      <div class="step"><span class="step-num">6</span><p>Compromise: average both → <span class="math">Var(W) = 2/(n_in + n_out)</span>. Done!</p></div>
+    </div>
+  </div>
+
+  <div class="derivation" id="derivHe">
+    <div class="derivation-header" onclick="toggleDeriv('derivHe')">
+      <h4>📐 He Derivation — just one extra line (tap to expand)</h4>
+      <span class="toggle">+</span>
+    </div>
+    <div class="derivation-body">
+      <div class="step"><span class="step-num">1</span><p>Same setup: <span class="math">Var(z) = n_in × Var(W)</span> (pre-activation).</p></div>
+      <div class="step"><span class="step-num">2</span><p>After ReLU: half the values become zero → <span class="math">Var(ReLU(z)) ≈ ½ × Var(z)</span>.</p></div>
+      <div class="step"><span class="step-num">3</span><p>So <span class="math">Var(y) = ½ × n_in × Var(W)</span>. Want this = 1.</p></div>
+      <div class="step"><span class="step-num">4</span><p>Solve → <span class="math">Var(W) = 2/n_in</span>. The factor of 2 compensates for ReLU's 50% kill rate.</p></div>
+      <div class="step"><span class="step-num">5</span><p>Only uses n_in (fan-in), because ReLU's unbounded output makes forward-pass control more important.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DECISION TREE ═══════════════ -->
+<div class="section">
+  <div class="section-label">04 — Decision Guide</div>
+  <h2>Which Init Should You Use?</h2>
+  <p>In practice, this is the flowchart that matters:</p>
+
+  <div class="decision-tree-wrap">
+    <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:800px;">
+      <defs>
+        <filter id="glow"><feGaussianBlur stdDeviation="2" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#6e7681"/></marker>
+      </defs>
+      <!-- Start -->
+      <rect x="280" y="10" width="240" height="44" rx="22" fill="#1c1c24" stroke="#6ee7b7" stroke-width="1.5"/>
+      <text x="400" y="38" text-anchor="middle" fill="#e8e6e3" font-family="Source Sans 3" font-size="14" font-weight="600">What's your architecture?</text>
+      
+      <!-- Branches -->
+      <line x1="340" y1="54" x2="160" y2="100" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <line x1="400" y1="54" x2="400" y2="100" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <line x1="460" y1="54" x2="640" y2="100" stroke="#6e7681" marker-end="url(#arrow)"/>
+
+      <!-- CNN -->
+      <rect x="60" y="102" width="200" height="40" rx="8" fill="#1c1c24" stroke="#2a2a35"/>
+      <text x="160" y="127" text-anchor="middle" fill="#f87171" font-family="JetBrains Mono" font-size="12">CNN (ResNet etc.)</text>
+      <line x1="160" y1="142" x2="160" y2="185" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <rect x="60" y="188" width="200" height="50" rx="10" fill="rgba(110,231,183,0.08)" stroke="rgba(110,231,183,0.3)"/>
+      <text x="160" y="210" text-anchor="middle" fill="#6ee7b7" font-family="JetBrains Mono" font-size="13" font-weight="600">He Normal</text>
+      <text x="160" y="228" text-anchor="middle" fill="#8a8a95" font-family="Source Sans 3" font-size="11">Var(W) = 2/n_in</text>
+
+      <!-- Transformer -->
+      <rect x="300" y="102" width="200" height="40" rx="8" fill="#1c1c24" stroke="#2a2a35"/>
+      <text x="400" y="127" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="12">Transformer</text>
+      <line x1="400" y1="142" x2="400" y2="185" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <rect x="300" y="188" width="200" height="50" rx="10" fill="rgba(56,189,248,0.08)" stroke="rgba(56,189,248,0.3)"/>
+      <text x="400" y="210" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="13" font-weight="600">Xavier Normal</text>
+      <text x="400" y="228" text-anchor="middle" fill="#8a8a95" font-family="Source Sans 3" font-size="11">LayerNorm handles the rest</text>
+
+      <!-- RNN -->
+      <rect x="540" y="102" width="200" height="40" rx="8" fill="#1c1c24" stroke="#2a2a35"/>
+      <text x="640" y="127" text-anchor="middle" fill="#a78bfa" font-family="JetBrains Mono" font-size="12">RNN / LSTM</text>
+      <line x1="640" y1="142" x2="640" y2="185" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <rect x="540" y="188" width="200" height="50" rx="10" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.3)"/>
+      <text x="640" y="210" text-anchor="middle" fill="#a78bfa" font-family="JetBrains Mono" font-size="13" font-weight="600">Orthogonal + Xavier</text>
+      <text x="640" y="228" text-anchor="middle" fill="#8a8a95" font-family="Source Sans 3" font-size="11">Forget bias = 1</text>
+
+      <!-- Deep? sub-question -->
+      <line x1="160" y1="238" x2="160" y2="275" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <rect x="60" y="278" width="200" height="36" rx="18" fill="#1c1c24" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4"/>
+      <text x="160" y="301" text-anchor="middle" fill="#fbbf24" font-family="Source Sans 3" font-size="12">100+ layers?</text>
+      <line x1="160" y1="314" x2="160" y2="345" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <rect x="55" y="348" width="210" height="44" rx="10" fill="rgba(251,191,36,0.08)" stroke="rgba(251,191,36,0.2)"/>
+      <text x="160" y="367" text-anchor="middle" fill="#fbbf24" font-family="JetBrains Mono" font-size="11" font-weight="600">+ Fixup / ReZero</text>
+      <text x="160" y="383" text-anchor="middle" fill="#8a8a95" font-family="Source Sans 3" font-size="10">Init residual scale α=0</text>
+
+      <line x1="400" y1="238" x2="400" y2="275" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <rect x="300" y="278" width="200" height="36" rx="18" fill="#1c1c24" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4"/>
+      <text x="400" y="301" text-anchor="middle" fill="#fbbf24" font-family="Source Sans 3" font-size="12">100+ layers?</text>
+      <line x1="400" y1="314" x2="400" y2="345" stroke="#6e7681" marker-end="url(#arrow)"/>
+      <rect x="290" y="348" width="220" height="44" rx="10" fill="rgba(251,191,36,0.08)" stroke="rgba(251,191,36,0.2)"/>
+      <text x="400" y="367" text-anchor="middle" fill="#fbbf24" font-family="JetBrains Mono" font-size="11" font-weight="600">+ Depth Scaling</text>
+      <text x="400" y="383" text-anchor="middle" fill="#8a8a95" font-family="Source Sans 3" font-size="10">W_out /= √(2·num_layers)</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ═══════════════ MODERN RECIPES TABLE ═══════════════ -->
+<div class="section">
+  <div class="section-label">05 — Quick Reference</div>
+  <h2>Modern Recipes at a Glance</h2>
+
+  <div class="comparison">
+    <table>
+      <tr>
+        <th>Architecture</th>
+        <th>Initialization</th>
+        <th>Why</th>
+      </tr>
+      <tr>
+        <td>CNNs (ResNet)</td>
+        <td><span class="tag tag-green">He Normal</span></td>
+        <td>ReLU activations need the 2× factor</td>
+      </tr>
+      <tr>
+        <td>Transformers (GPT, BERT)</td>
+        <td><span class="tag tag-blue">Xavier Normal</span></td>
+        <td>LayerNorm stabilizes; GELU ≈ linear near 0</td>
+      </tr>
+      <tr>
+        <td>ViT</td>
+        <td><span class="tag tag-purple">Trunc Normal σ=0.02</span></td>
+        <td>Stabilizes patch embeddings</td>
+      </tr>
+      <tr>
+        <td>RNN / LSTM</td>
+        <td><span class="tag tag-purple">Orthogonal + Xavier</span></td>
+        <td>Orthogonal prevents exploding through time</td>
+      </tr>
+      <tr>
+        <td>GAN Generator</td>
+        <td><span class="tag tag-yellow">N(0, 0.02)</span></td>
+        <td>Stabilizes fragile adversarial training</td>
+      </tr>
+      <tr>
+        <td>GAN Discriminator</td>
+        <td><span class="tag tag-green">He Normal</span></td>
+        <td>Leaky ReLU typical</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="analogy">
+    <strong>Transformer layer-by-layer:</strong>
+    <p><span class="math">Embeddings</span> → N(0, 0.02) &nbsp;|&nbsp; <span class="math">Q/K/V, FFN</span> → Xavier &nbsp;|&nbsp; <span class="math">LayerNorm</span> → γ=1, β=0 &nbsp;|&nbsp; <span class="math">Output proj (deep)</span> → scale by 1/√num_layers</p>
+  </div>
+</div>
+
+<!-- ═══════════════ SPECIAL CASES ═══════════════ -->
+<div class="section">
+  <div class="section-label">06 — Edge Cases</div>
+  <h2>Don't Forget These</h2>
+
+  <div class="problems-grid">
+    <div class="problem-card" style="border-color: var(--accent2);">
+      <div class="icon">⚖️</div>
+      <h4 style="color: var(--accent2);">Biases</h4>
+      <p>Hidden layers → <strong>zero</strong>. Output bias for imbalanced classes → <span class="math">log(p / (1-p))</span> for faster convergence.</p>
+    </div>
+    <div class="problem-card" style="border-color: var(--accent);">
+      <div class="icon">🔄</div>
+      <h4 style="color: var(--accent);">Norm Layers</h4>
+      <p>γ=1, β=0 → starts as identity. Reduces sensitivity to weight init in earlier layers.</p>
+    </div>
+    <div class="problem-card" style="border-color: var(--purple);">
+      <div class="icon">🧊</div>
+      <h4 style="color: var(--purple);">Transfer Learning</h4>
+      <p>Keep pretrained weights. Only init new head (Xavier/He). Use tiny LR: 1e-5 to 1e-6.</p>
+    </div>
+    <div class="problem-card" style="border-color: var(--warn);">
+      <div class="icon">🏗️</div>
+      <h4 style="color: var(--warn);">ReZero / Fixup</h4>
+      <p>For 100+ layer nets: init residual branch scale α=0 so block starts as identity: y = x + 0·F(x).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PYTORCH ═══════════════ -->
+<div class="section">
+  <div class="section-label">07 — Code</div>
+  <h2>PyTorch Cheat Sheet</h2>
+  <p>PyTorch defaults (<span class="math">nn.Linear</span>, <span class="math">nn.Conv2d</span>) already use Kaiming Uniform. You usually only override for transformers, GANs, or LSTMs.</p>
+
+  <div class="code-block">
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+
+<span class="comment"># He Normal (CNNs with ReLU)</span>
+nn.init.<span class="fn">kaiming_normal_</span>(layer.weight, mode=<span class="str">'fan_in'</span>, nonlinearity=<span class="str">'relu'</span>)
+
+<span class="comment"># Xavier Normal (Transformers)</span>
+nn.init.<span class="fn">xavier_normal_</span>(layer.weight)
+
+<span class="comment"># Embeddings (GPT-style)</span>
+nn.init.<span class="fn">normal_</span>(layer.weight, mean=<span class="str">0</span>, std=<span class="str">0.02</span>)
+
+<span class="comment"># Truncated Normal (ViT)</span>
+nn.init.<span class="fn">trunc_normal_</span>(layer.weight, std=<span class="str">0.02</span>)
+
+<span class="comment"># Orthogonal (RNN recurrent weights)</span>
+nn.init.<span class="fn">orthogonal_</span>(layer.weight)
+
+<span class="comment"># LSTM forget gate bias → 1 (keep memory early on)</span>
+n = bias.size(<span class="str">0</span>)
+bias[n//<span class="str">4</span>:n//<span class="str">2</span>].fill_(<span class="str">1.0</span>)
+  </div>
+</div>
+
+<!-- ═══════════════ INTERVIEW QA ═══════════════ -->
+<div class="section">
+  <div class="section-label">08 — Interview Prep</div>
+  <h2>Top Questions & Crisp Answers</h2>
+
+  <div class="cheat-sheet">
+    <div class="qa">
+      <div class="qa-q">Why not initialize all weights to zero?</div>
+      <div class="qa-a">Symmetry problem: every neuron computes the same thing, gets the same gradient, learns the same feature. The entire layer collapses to a single neuron. You need random diversity to break symmetry.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">Xavier vs He — when to use which?</div>
+      <div class="qa-a"><strong>He</strong> for any network using ReLU (most CNNs). <strong>Xavier</strong> for sigmoid/tanh or transformers (where LayerNorm makes the activation choice less critical). One-liner: "ReLU + CNN → He. Transformer → Xavier."</div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">What's the initialization for GPT/BERT?</div>
+      <div class="qa-a">Embeddings: N(0, 0.02). Linear layers (Q/K/V, FFN): Xavier Normal. LayerNorm: γ=1, β=0. For very deep models (GPT-3): scale output projections by 1/√(2·num_layers).</div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">How does batch norm affect initialization?</div>
+      <div class="qa-a">It normalizes activations, making training less sensitive to init. Still use He/Xavier for best results — but batch norm gives you more margin for error.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">When does init matter most?</div>
+      <div class="qa-a">Very deep nets (50+ layers) without normalization, GANs (affects stability), and networks without skip connections. It matters <em>least</em> in transfer learning and shallow nets.</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<footer>
+  Weight Initialization · Intuitive Guide · Built from AI/ML Interview Prep
+</footer>
+
+<script>
+// ─── Derivation Toggle ───
+function toggleDeriv(id) {
+  const el = document.getElementById(id);
+  const body = el.querySelector('.derivation-body');
+  const toggle = el.querySelector('.toggle');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  toggle.textContent = isOpen ? '+' : '−';
+}
+
+// ─── Interactive Variance Visualization ───
+const canvas = document.getElementById('varianceCanvas');
+const ctx = canvas.getContext('2d');
+const dpr = window.devicePixelRatio || 1;
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 280 * dpr;
+  ctx.scale(dpr, dpr);
+}
+resizeCanvas();
+window.addEventListener('resize', () => { resizeCanvas(); simulate(); });
+
+function simulate() {
+  const W = canvas.getBoundingClientRect().width;
+  const H = 280;
+  ctx.clearRect(0, 0, W, H);
+
+  const initType = document.getElementById('initSelect').value;
+  const actType = document.getElementById('actSelect').value;
+  const numLayers = 10;
+  const n = 256; // neurons per layer
+
+  // Compute variance per layer
+  let variances = [1.0]; // input variance
+  for (let l = 0; l < numLayers; l++) {
+    let prevVar = variances[variances.length - 1];
+    let wVar;
+    switch(initType) {
+      case 'tiny': wVar = 0.0001; break;
+      case 'xavier': wVar = 2 / (n + n); break;
+      case 'he': wVar = 2 / n; break;
+      case 'large': wVar = 4.0; break;
+    }
+    let outVar = n * wVar * prevVar;
+    if (actType === 'relu') outVar *= 0.5;
+    if (actType === 'tanh') outVar *= Math.max(0.05, 1 - outVar * 0.3); // approximate tanh compression
+    variances.push(Math.min(outVar, 1e6));
+  }
+
+  // Normalize for display
+  const maxVar = Math.max(...variances, 1e-10);
+  const logScale = variances.map(v => v > 0 ? Math.log10(v + 1e-12) : -12);
+  const minLog = Math.min(...logScale);
+  const maxLog = Math.max(...logScale);
+  const range = maxLog - minLog || 1;
+
+  const padL = 50, padR = 30, padT = 30, padB = 50;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  // Grid lines
+  ctx.strokeStyle = '#1c1c24';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + (plotH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+  }
+
+  // Determine color
+  let color, label;
+  const isGood = (initType === 'xavier' && actType === 'tanh') || (initType === 'he' && actType === 'relu') || (initType === 'xavier' && actType === 'relu');
+  if (initType === 'tiny') { color = '#f87171'; label = 'Vanishes! ❌'; }
+  else if (initType === 'large') { color = '#f87171'; label = 'Explodes! ❌'; }
+  else if (initType === 'he' && actType === 'relu') { color = '#6ee7b7'; label = 'Stable ✓'; }
+  else if (initType === 'xavier' && actType === 'tanh') { color = '#6ee7b7'; label = 'Stable ✓'; }
+  else if (initType === 'xavier' && actType === 'relu') { color = '#fbbf24'; label = 'Decays slowly ⚠️'; }
+  else if (initType === 'he' && actType === 'tanh') { color = '#fbbf24'; label = 'Okay ⚠️'; }
+  else { color = '#38bdf8'; label = ''; }
+
+  // Bars
+  const barW = plotW / (numLayers + 1) * 0.6;
+  const gap = plotW / (numLayers + 1);
+  for (let i = 0; i <= numLayers; i++) {
+    const normH = ((logScale[i] - minLog) / range) * plotH * 0.85 + plotH * 0.08;
+    const x = padL + gap * i + (gap - barW) / 2;
+    const y = padT + plotH - normH;
+
+    const grad = ctx.createLinearGradient(x, y, x, padT + plotH);
+    grad.addColorStop(0, color);
+    grad.addColorStop(1, color + '20');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, normH, [4, 4, 0, 0]);
+    ctx.fill();
+
+    // Layer label
+    ctx.fillStyle = '#6e7681';
+    ctx.font = '11px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(i === 0 ? 'Input' : `L${i}`, x + barW / 2, padT + plotH + 18);
+
+    // Value
+    ctx.fillStyle = '#8a8a95';
+    ctx.font = '9px JetBrains Mono';
+    ctx.fillText(variances[i] > 1000 ? variances[i].toExponential(0) : variances[i] < 0.001 ? variances[i].toExponential(1) : variances[i].toFixed(2), x + barW / 2, y - 6);
+  }
+
+  // Status label
+  ctx.fillStyle = color;
+  ctx.font = 'bold 14px Source Sans 3';
+  ctx.textAlign = 'right';
+  ctx.fillText(label, W - padR, padT + 16);
+
+  // Y-axis label
+  ctx.save();
+  ctx.translate(14, padT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#6e7681';
+  ctx.font = '11px Source Sans 3';
+  ctx.textAlign = 'center';
+  ctx.fillText('Variance (log scale)', 0, 0);
+  ctx.restore();
+}
+
+document.getElementById('initSelect').addEventListener('change', simulate);
+document.getElementById('actSelect').addEventListener('change', simulate);
+document.getElementById('runBtn').addEventListener('click', simulate);
+
+// Initial run
+simulate();
+</script>
+</body>
+</html>

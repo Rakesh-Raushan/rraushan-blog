@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rakesh Raushan — ML Engineer &amp; Freelancer</title>
+<meta name="description" content="ML Engineer available for freelance projects — machine learning systems, Python development, and technical writing.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #f7f5f0;
+    --surface: #fffefb;
+    --ink:     #1a1816;
+    --ink2:    #4a4540;
+    --ink3:    #8a8278;
+    --accent:  #c84b2f;
+    --accent2: #2a5f8f;
+    --accent3: #2a7a4f;
+    --border:  rgba(26,24,22,0.10);
+    --border2: rgba(26,24,22,0.06);
+    --code-bg: #f0ede6;
+    --shadow:  0 2px 10px rgba(26,24,22,0.07);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:      #1a1816;
+      --surface: #1e1c1a;
+      --ink:     #d4cfc8;
+      --ink2:    #8a8278;
+      --ink3:    #6a6560;
+      --accent:  #d4634a;
+      --accent2: #5b90c0;
+      --accent3: #4a9a6a;
+      --border:  rgba(212,207,200,0.12);
+      --border2: rgba(212,207,200,0.06);
+      --code-bg: #242220;
+      --shadow:  0 2px 10px rgba(0,0,0,0.35);
+    }
+    ::-webkit-scrollbar              { background: #1a1816; }
+    ::-webkit-scrollbar-thumb        { background: #3a3632; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover  { background: #4a4540; }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ── Top bar ──────────────────────────────────────────── */
+  .topbar {
+    background: #1a1816;
+    padding: 14px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topbar-brand {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    color: #d4cfc8;
+    text-decoration: none;
+    letter-spacing: -0.2px;
+  }
+  .topbar-nav {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+  .topbar-nav a {
+    color: #8a8278;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .topbar-nav a:hover { color: #d4cfc8; }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero {
+    padding: 72px 0 68px;
+    border-bottom: 1px solid var(--border);
+  }
+  .availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: var(--ink3);
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent3);
+    flex-shrink: 0;
+  }
+  .hero-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+  }
+  .avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .hero-text h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 46px;
+    font-weight: 400;
+    letter-spacing: -0.6px;
+    line-height: 1.08;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .hero-role {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 22px;
+  }
+  .hero-bio {
+    font-size: 16px;
+    color: var(--ink2);
+    line-height: 1.72;
+    max-width: 530px;
+    margin-bottom: 30px;
+    font-weight: 300;
+  }
+  .cta-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fffefb;
+  }
+  .btn-primary:hover { background: #a83c22; }
+  .btn-secondary {
+    border: 1px solid var(--border);
+    color: var(--ink2);
+    background: var(--surface);
+  }
+  .btn-secondary:hover { border-color: var(--ink3); color: var(--ink); }
+
+  /* ── Sections ─────────────────────────────────────────── */
+  .section {
+    padding: 64px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-of-type { border-bottom: none; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.4px;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+  .section-body {
+    color: var(--ink2);
+    font-size: 15px;
+    line-height: 1.75;
+    max-width: 600px;
+  }
+  .section-body a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .section-body a:hover { text-decoration: underline; }
+
+  /* ── Services grid ────────────────────────────────────── */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 14px;
+    margin-top: 32px;
+  }
+  .service-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 26px;
+  }
+  .service-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .service-card p {
+    font-size: 13.5px;
+    color: var(--ink3);
+    line-height: 1.65;
+  }
+  .service-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  /* ── Skills ───────────────────────────────────────────── */
+  .skill-groups {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .skill-row {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .skill-group-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    min-width: 140px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--code-bg);
+    color: var(--ink2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+  }
+
+  /* ── Projects ─────────────────────────────────────────── */
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 32px;
+  }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 26px 28px;
+    transition: border-color 0.15s;
+  }
+  .project-card:hover { border-color: var(--ink3); }
+  .project-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+  .project-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .project-link {
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .project-link:hover { text-decoration: underline; }
+  .project-desc {
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .project-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .stack-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--code-bg);
+    color: var(--ink3);
+    border-radius: 3px;
+    padding: 3px 8px;
+  }
+
+  /* ── Writing ──────────────────────────────────────────── */
+  .writing-list {
+    margin-top: 28px;
+  }
+  .writing-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border2);
+    text-decoration: none;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  .writing-item:last-child { border-bottom: none; }
+  .writing-item:hover { color: var(--accent); }
+  .writing-item-title { font-size: 15px; font-weight: 400; }
+  .writing-item-meta {
+    font-size: 12px;
+    color: var(--ink3);
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── Contact ──────────────────────────────────────────── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .contact-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 22px;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--surface);
+    transition: border-color 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .contact-card:hover { border-color: var(--accent); }
+  .contact-card-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink3);
+  }
+  .contact-card-value {
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  /* ── Footer ───────────────────────────────────────────── */
+  .footer {
+    background: #1a1816;
+    padding: 30px 0;
+    text-align: center;
+    font-size: 13px;
+    color: #5a5550;
+  }
+  .footer a { color: #8a8278; text-decoration: none; }
+  .footer a:hover { color: #d4cfc8; }
+
+  /* ── Responsive ───────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .container { padding: 0 20px; }
+    .topbar-nav { display: none; }
+    .hero { padding: 52px 0 48px; }
+    .hero-inner { flex-direction: column; gap: 20px; }
+    .hero-text h1 { font-size: 36px; }
+    .hero-bio { font-size: 15px; }
+    .section { padding: 48px 0; }
+    .section-title { font-size: 26px; }
+    .skill-row { flex-direction: column; gap: 8px; }
+    .skill-group-label { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="topbar">
+  <div class="container">
+    <a href="/" class="topbar-brand">Rakesh Raushan</a>
+    <ul class="topbar-nav">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#writing">Writing</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <div class="availability">
+      <span class="dot"></span>
+      Available for freelance work
+    </div>
+    <div class="hero-inner">
+      <img class="avatar" src="/assets/avatar.jpeg" alt="Rakesh Raushan">
+      <div class="hero-text">
+        <h1>Rakesh Raushan</h1>
+        <p class="hero-role">ML Engineer &nbsp;·&nbsp; Technical Writer</p>
+        <p class="hero-bio">
+          I specialize in production ML systems — inference optimization, memory management,
+          and the gap between a model that works in a notebook and one that survives real load.
+          I write about it too, with concrete numbers rather than hand-waving.
+        </p>
+        <div class="cta-row">
+          <a href="mailto:mod.rakesh24@gmail.com" class="btn btn-primary">Get in touch</a>
+          <a href="https://rraushan.blog" class="btn btn-secondary">Read my blog →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Services -->
+<section class="section" id="services">
+  <div class="container">
+    <p class="section-label">What I do</p>
+    <h2 class="section-title">Services</h2>
+    <p class="section-body">
+      I work with teams and individuals who need machine learning expertise,
+      clean Python code, or someone who can translate technical complexity
+      into clear documentation and guides.
+    </p>
+    <div class="services-grid">
+      <div class="service-card">
+        <p class="service-num">01</p>
+        <h3>ML Engineering</h3>
+        <p>Inference optimization, training pipelines, and production deployment. Specializing in the part most projects underestimate: making models fast, memory-stable, and reliable under real load.</p>
+      </div>
+      <div class="service-card">
+        <p class="service-num">02</p>
+        <h3>Python Development</h3>
+        <p>Clean, well-tested Python — data pipelines, automation scripts, CLI tools, and backend services built for maintainability.</p>
+      </div>
+      <div class="service-card">
+        <p class="service-num">03</p>
+        <h3>Technical Writing</h3>
+        <p>Documentation, tutorials, and blog posts that make complex systems understandable — without losing accuracy.</p>
+      </div>
+      <div class="service-card">
+        <p class="service-num">04</p>
+        <h3>System Design Review</h3>
+        <p>Architecture review and design consultation for ML systems and data-intensive applications. Catch problems early.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section class="section" id="skills">
+  <div class="container">
+    <p class="section-label">Technical skills</p>
+    <h2 class="section-title">Stack</h2>
+    <!--
+      Edit the tags below to match your actual skills.
+    -->
+    <div class="skill-groups">
+      <div class="skill-row">
+        <span class="skill-group-label">Machine Learning</span>
+        <div class="tags">
+          <span class="tag">PyTorch</span>
+          <span class="tag">ONNX Runtime</span>
+          <span class="tag">YOLOv8</span>
+          <span class="tag">HuggingFace</span>
+          <span class="tag">LLM Inference</span>
+          <span class="tag">Quantization</span>
+        </div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-group-label">Python &amp; Data</span>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">NumPy</span>
+          <span class="tag">Pandas</span>
+          <span class="tag">OpenCV</span>
+          <span class="tag">Pydantic</span>
+        </div>
+      </div>
+      <div class="skill-row">
+        <span class="skill-group-label">Infrastructure</span>
+        <div class="tags">
+          <span class="tag">Docker</span>
+          <span class="tag">AKS</span>
+          <span class="tag">GitHub Actions</span>
+          <span class="tag">Linux</span>
+          <span class="tag">PostgreSQL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section class="section" id="projects">
+  <div class="container">
+    <p class="section-label">Selected work</p>
+    <h2 class="section-title">Projects</h2>
+    <p class="section-body">
+      Production-grade projects built as engineering assessments — each one
+      designed and tested as if it were going to production.
+    </p>
+    <div class="projects-list">
+
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">Coin Detection API</span>
+          <a href="https://github.com/Rakesh-Raushan/coin-detection-challenge" class="project-link" target="_blank" rel="noopener">GitHub →</a>
+        </div>
+        <p class="project-desc">
+          REST API for detecting and localising coins in images. Fine-tuned YOLOv8 Nano
+          for detection, then applied deterministic geometric post-processing to derive
+          precise bounding boxes, centres, and elliptical fits — avoiding the need for
+          expensive pixel-level segmentation labels. Achieves 0.73 mAP@0.5:0.95 with
+          50–150 ms inference on CPU. Ships with 98% test coverage.
+        </p>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">YOLOv8</span>
+          <span class="stack-tag">FastAPI</span>
+          <span class="stack-tag">SQLModel</span>
+          <span class="stack-tag">OpenCV</span>
+          <span class="stack-tag">Docker</span>
+          <span class="stack-tag">GitHub Actions</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-header">
+          <span class="project-title">DepthFrame Processing Service</span>
+          <a href="https://github.com/Rakesh-Raushan/DepthFrame-Processing-Service" class="project-link" target="_blank" rel="noopener">GitHub →</a>
+        </div>
+        <p class="project-desc">
+          Production REST API for borehole image-log analysis. Ingests raw CSV image data,
+          validates and anti-alias-resizes frames, persists them via a repository-pattern
+          abstraction over SQLite, and serves depth-range queries with six domain-specific
+          colormaps (resistivity, conductivity, geological, and more). The repository pattern
+          keeps storage swappable — SQLite today, S3 or PostgreSQL tomorrow.
+        </p>
+        <div class="project-stack">
+          <span class="stack-tag">Python</span>
+          <span class="stack-tag">FastAPI</span>
+          <span class="stack-tag">OpenCV</span>
+          <span class="stack-tag">NumPy</span>
+          <span class="stack-tag">SQLite</span>
+          <span class="stack-tag">Docker</span>
+          <span class="stack-tag">GitHub Actions</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Writing -->
+<section class="section" id="writing">
+  <div class="container">
+    <p class="section-label">Writing</p>
+    <h2 class="section-title">From the blog &amp; Medium</h2>
+    <p class="section-body">
+      I write about production ML, inference optimization, and Python internals —
+      on <a href="https://rraushan.blog">rraushan.blog</a> and
+      <a href="https://medium.com/@rraushan24" target="_blank" rel="noopener">Medium</a>.
+    </p>
+    <div class="writing-list">
+      <a href="https://medium.com/@rraushan24" target="_blank" rel="noopener" class="writing-item">
+        <span class="writing-item-title">Why Your ONNX Process Holds Onto Gigabytes of Memory After Inference</span>
+        <span class="writing-item-meta">Apr 2026 · Medium</span>
+      </a>
+      <a href="https://medium.com/@rraushan24" target="_blank" rel="noopener" class="writing-item">
+        <span class="writing-item-title">Inference Engineering — Techniques: Quantization, KV Cache &amp; Decode Bottlenecks (3-part series)</span>
+        <span class="writing-item-meta">Mar–Apr 2026 · Medium</span>
+      </a>
+      <a href="https://rraushan.blog/2026-03-20/python_under_hood/" class="writing-item">
+        <span class="writing-item-title">Python Remembers Everything — Until You Ask It to Forget</span>
+        <span class="writing-item-meta">Mar 2026 · rraushan.blog</span>
+      </a>
+      <a href="https://medium.com/@rraushan24" target="_blank" rel="noopener" class="writing-item">
+        <span class="writing-item-title">Training ResNet-50 from Scratch: Lessons Beyond the Model</span>
+        <span class="writing-item-meta">Jan 2025 · Medium</span>
+      </a>
+      <a href="https://medium.com/@rraushan24" target="_blank" rel="noopener" class="writing-item">
+        <span class="writing-item-title">All articles on Medium →</span>
+        <span class="writing-item-meta"></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="container">
+    <p class="section-label">Let's work together</p>
+    <h2 class="section-title">Get in touch</h2>
+    <p class="section-body">
+      If you have a project in mind or just want to explore whether I'm a good fit —
+      drop me an email. I typically respond within a day.
+    </p>
+    <div class="contact-grid">
+      <a href="mailto:mod.rakesh24@gmail.com" class="contact-card">
+        <span class="contact-card-label">Email</span>
+        <span class="contact-card-value">mod.rakesh24@gmail.com</span>
+      </a>
+      <a href="https://rraushan.blog" class="contact-card">
+        <span class="contact-card-label">Blog</span>
+        <span class="contact-card-value">rraushan.blog</span>
+      </a>
+      <a href="https://medium.com/@rraushan24" class="contact-card" target="_blank" rel="noopener">
+        <span class="contact-card-label">Medium</span>
+        <span class="contact-card-value">@rraushan24</span>
+      </a>
+      <a href="https://github.com/Rakesh-Raushan" class="contact-card" target="_blank" rel="noopener">
+        <span class="contact-card-label">GitHub</span>
+        <span class="contact-card-value">Rakesh-Raushan</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    Rakesh Raushan &nbsp;·&nbsp;
+    <a href="mailto:mod.rakesh24@gmail.com">mod.rakesh24@gmail.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://rraushan.blog">rraushan.blog</a>
+    &nbsp;·&nbsp;
+    <a href="https://medium.com/@rraushan24" target="_blank" rel="noopener">Medium</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/Rakesh-Raushan" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
