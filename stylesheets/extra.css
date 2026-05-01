@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+
+/* ─── Design tokens (mirrors the HTML notes system) ─────────────────────────
+   --bg       #f7f5f0   warm parchment background
+   --ink      #1a1816   near-black warm text
+   --ink2     #4a4540   secondary text
+   --ink3     #8a8278   muted / labels
+   --accent   #c84b2f   terracotta — primary / links
+   --accent2  #2a5f8f   blue — secondary accent
+   --accent3  #2a7a4f   green — success / positive
+   --code-bg  #f0ede6   warm beige code background
+   code dark  #1e1c1a   warm dark for code blocks
+──────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Light mode ─────────────────────────────────────────────────────────── */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:           #c84b2f;
+  --md-primary-fg-color--light:    #d4634a;
+  --md-primary-fg-color--dark:     #a33c24;
+  --md-accent-fg-color:            #2a5f8f;
+  --md-accent-fg-color--transparent: rgba(42,95,143,0.1);
+
+  --md-default-bg-color:           #f7f5f0;
+  --md-default-bg-color--light:    #fffefb;
+  --md-default-bg-color--lighter:  #fffefb;
+  --md-default-bg-color--lightest: #fffefb;
+
+  --md-default-fg-color:           #1a1816;
+  --md-default-fg-color--light:    #4a4540;
+  --md-default-fg-color--lighter:  #8a8278;
+  --md-default-fg-color--lightest: rgba(26,24,22,0.12);
+
+  --md-code-bg-color:              #f0ede6;
+  --md-code-fg-color:              #1a1816;
+
+  --md-footer-bg-color:            #1a1816;
+  --md-footer-bg-color--dark:      #111010;
+  --md-footer-fg-color:            #d4cfc8;
+  --md-footer-fg-color--light:     #8a8278;
+  --md-footer-fg-color--lighter:   #4a4540;
+
+  /* Admonition / callout accents */
+  --md-admonition-fg-color:        #1a1816;
+  --md-admonition-bg-color:        #fffefb;
+}
+
+/* ─── Dark mode ──────────────────────────────────────────────────────────── */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:           #d4634a;
+  --md-primary-fg-color--light:    #de7a62;
+  --md-primary-fg-color--dark:     #c84b2f;
+  --md-accent-fg-color:            #5b90c0;
+  --md-accent-fg-color--transparent: rgba(91,144,192,0.1);
+
+  --md-default-bg-color:           #1a1816;
+  --md-default-bg-color--light:    #1e1c1a;
+  --md-default-bg-color--lighter:  #242220;
+  --md-default-bg-color--lightest: #2a2826;
+
+  --md-default-fg-color:           #d4cfc8;
+  --md-default-fg-color--light:    #8a8278;
+  --md-default-fg-color--lighter:  rgba(212,207,200,0.32);
+  --md-default-fg-color--lightest: rgba(212,207,200,0.12);
+
+  --md-code-bg-color:              #1e1c1a;
+  --md-code-fg-color:              #d4cfc8;
+
+  --md-footer-bg-color:            #111010;
+  --md-footer-fg-color:            #8a8278;
+}
+
+/* ─── Header & tabs — warm dark, matches code block bg ───────────────────── */
+.md-header,
+.md-tabs {
+  background-color: #1a1816;
+  color: #d4cfc8;
+}
+
+.md-header__title {
+  color: #d4cfc8;
+}
+
+.md-tabs__link {
+  color: #8a8278;
+  opacity: 1;
+}
+
+.md-tabs__link--active,
+.md-tabs__link:hover {
+  color: #d4cfc8;
+}
+
+/* ─── Headings — Instrument Serif to match HTML notes ────────────────────── */
+.md-typeset h1 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: 2.2em;
+  letter-spacing: -0.3px;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h2 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-size: 1.6em;
+  letter-spacing: -0.2px;
+}
+
+.md-typeset h3 {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.2em;
+}
+
+/* ─── Links ──────────────────────────────────────────────────────────────── */
+.md-typeset a {
+  color: #c84b2f;
+}
+
+.md-typeset a:hover {
+  color: #a33c24;
+}
+
+[data-md-color-scheme="slate"] .md-typeset a {
+  color: #d4634a;
+}
+
+/* ─── Code blocks — warm dark matching HTML notes ────────────────────────── */
+.md-typeset pre > code {
+  background-color: #1e1c1a;
+  color: #d4cfc8;
+}
+
+/* ─── Inline code ────────────────────────────────────────────────────────── */
+.md-typeset code {
+  background-color: var(--md-code-bg-color);
+  color: #c84b2f;
+  border-radius: 3px;
+}
+
+[data-md-color-scheme="slate"] .md-typeset code {
+  color: #d4634a;
+}
+
+/* ─── Search ─────────────────────────────────────────────────────────────── */
+.md-search__form {
+  background-color: rgba(212,207,200,0.08);
+}
+
+/* ─── Nav sidebar ─────────────────────────────────────────────────────────── */
+.md-nav__link--active {
+  color: #c84b2f;
+  font-weight: 500;
+}
+
+[data-md-color-scheme="slate"] .md-nav__link--active {
+  color: #d4634a;
+}
