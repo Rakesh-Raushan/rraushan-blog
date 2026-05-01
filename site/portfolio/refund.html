@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancellation &amp; Refund Policy — Rakesh Raushan</title>
+<meta name="description" content="Cancellation and Refund Policy for freelance services provided by Rakesh Raushan.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #f7f5f0;
+    --surface: #fffefb;
+    --ink:     #1a1816;
+    --ink2:    #4a4540;
+    --ink3:    #8a8278;
+    --accent:  #c84b2f;
+    --accent3: #2a7a4f;
+    --border:  rgba(26,24,22,0.10);
+    --border2: rgba(26,24,22,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:      #1a1816;
+      --surface: #1e1c1a;
+      --ink:     #d4cfc8;
+      --ink2:    #8a8278;
+      --ink3:    #6a6560;
+      --accent:  #d4634a;
+      --accent3: #4a9a6a;
+      --border:  rgba(212,207,200,0.12);
+      --border2: rgba(212,207,200,0.06);
+    }
+    ::-webkit-scrollbar              { background: #1a1816; }
+    ::-webkit-scrollbar-thumb        { background: #3a3632; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover  { background: #4a4540; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 15px;
+    font-weight: 300;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+
+  .topbar { background: #1a1816; padding: 14px 0; }
+  .topbar .container { display: flex; align-items: center; justify-content: space-between; }
+  .topbar-brand { font-family: 'Instrument Serif', serif; font-size: 18px; color: #d4cfc8; text-decoration: none; }
+  .topbar-back { font-size: 13px; color: #8a8278; text-decoration: none; transition: color 0.15s; }
+  .topbar-back:hover { color: #d4cfc8; }
+
+  .doc { padding: 56px 0 96px; }
+  .doc-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .doc-title {
+    font-family: 'Instrument Serif', serif; font-size: 38px;
+    font-weight: 400; letter-spacing: -0.4px; margin-bottom: 8px; color: var(--ink);
+  }
+  .doc-meta { font-size: 13px; color: var(--ink3); margin-bottom: 48px; font-family: 'DM Mono', monospace; }
+
+  .section { margin-bottom: 40px; }
+  .section h2 {
+    font-family: 'Instrument Serif', serif; font-size: 22px;
+    font-weight: 400; margin-bottom: 12px; color: var(--ink);
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .section p { color: var(--ink2); margin-bottom: 12px; }
+  .section p:last-child { margin-bottom: 0; }
+  .section ul { color: var(--ink2); padding-left: 20px; margin-bottom: 12px; }
+  .section ul li { margin-bottom: 6px; }
+  strong { color: var(--ink); font-weight: 500; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Summary table */
+  .summary-table {
+    width: 100%; border-collapse: collapse;
+    margin: 20px 0 12px; font-size: 14px;
+  }
+  .summary-table th {
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink3); border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .summary-table td {
+    padding: 12px 14px; color: var(--ink2);
+    border-bottom: 1px solid var(--border2);
+    vertical-align: top;
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 2px 8px; border-radius: 4px; font-family: 'DM Mono', monospace;
+  }
+  .badge-full { background: #d4f0e0; color: #1a5c36; }
+  .badge-partial { background: #fef3cd; color: #7a5000; }
+  .badge-none { background: #fde8e4; color: #7a2018; }
+  @media (prefers-color-scheme: dark) {
+    .badge-full { background: #1a3d2a; color: #6ad49a; }
+    .badge-partial { background: #3a2e10; color: #d4a040; }
+    .badge-none { background: #3a1a16; color: #d47060; }
+  }
+
+  .legal-footer {
+    border-top: 1px solid var(--border); padding: 32px 0;
+    display: flex; flex-wrap: wrap; gap: 16px 32px;
+    font-size: 13px; color: var(--ink3);
+  }
+  .legal-footer a { color: var(--ink3); text-decoration: none; }
+  .legal-footer a:hover { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .container { padding: 0 20px; }
+    .doc-title { font-size: 28px; }
+    .doc { padding: 40px 0 64px; }
+    .summary-table { font-size: 13px; }
+    .summary-table th, .summary-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="container">
+    <a href="/portfolio/" class="topbar-brand">Rakesh Raushan</a>
+    <a href="/portfolio/" class="topbar-back">← Back to portfolio</a>
+  </div>
+</nav>
+
+<main class="doc">
+  <div class="container">
+    <p class="doc-label">Legal</p>
+    <h1 class="doc-title">Cancellation &amp; Refund Policy</h1>
+    <p class="doc-meta">Effective date: 1 May 2026 &nbsp;·&nbsp; Last updated: 1 May 2026</p>
+
+    <div class="section">
+      <h2>1. Overview</h2>
+      <p>This policy governs cancellations and refunds for freelance services provided by <strong>Rakesh Raushan</strong> via <strong>rraushan.blog</strong>. Because I provide professional, time-bound services rather than physical goods, refunds are determined by how much work has been completed at the time of cancellation.</p>
+      <p>I am committed to fair and transparent outcomes. If you have a concern about delivered work, please contact me before requesting a refund — most issues can be resolved through revisions.</p>
+    </div>
+
+    <div class="section">
+      <h2>2. Refund Summary</h2>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Stage of Cancellation</th>
+            <th>Refund</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Before work has started (within 48 hours of payment)</td>
+            <td><span class="badge badge-full">Full refund</span></td>
+          </tr>
+          <tr>
+            <td>After work has started, before 50% completion</td>
+            <td><span class="badge badge-partial">Partial refund</span> — fees for completed work are retained</td>
+          </tr>
+          <tr>
+            <td>After 50% or more of the work is complete</td>
+            <td><span class="badge badge-none">No refund</span> — full fee is retained</td>
+          </tr>
+          <tr>
+            <td>After final delivery and Client approval</td>
+            <td><span class="badge badge-none">No refund</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>3. Before Work Begins</h2>
+      <p>If you cancel within <strong>48 hours of making payment</strong> and before any work has commenced, you are entitled to a <strong>full refund</strong> of the amount paid.</p>
+      <p>To cancel, email <a href="mailto:contact@rraushan.blog">contact@rraushan.blog</a> with your project reference or invoice number. Refunds at this stage are processed within 5–7 business days.</p>
+    </div>
+
+    <div class="section">
+      <h2>4. During the Project</h2>
+      <p>If you cancel after work has commenced, a refund will be calculated based on the proportion of work not yet completed:</p>
+      <ul>
+        <li>Work completion is assessed in good faith against the agreed deliverables and milestones in the Statement of Work.</li>
+        <li>Fees for work already completed are non-refundable.</li>
+        <li>Any refundable amount will be calculated and communicated to you within 3 business days of the cancellation request.</li>
+      </ul>
+      <p>For milestone-based projects, fees paid for completed milestones are non-refundable. Fees paid in advance for future milestones that will not be started will be refunded in full.</p>
+    </div>
+
+    <div class="section">
+      <h2>5. After Delivery</h2>
+      <p>Once final deliverables have been handed over and accepted (either explicitly or by absence of feedback within the 7-day review window specified in the <a href="/portfolio/terms.html">Terms &amp; Conditions</a>), no refund is available.</p>
+      <p>If you are unsatisfied with delivered work, please raise a revision request within the 7-day window. I will work to address any concerns within the agreed revision scope.</p>
+    </div>
+
+    <div class="section">
+      <h2>6. Disputes About Deliverable Quality</h2>
+      <p>If you believe the delivered work materially fails to meet the agreed specifications, please contact me at <a href="mailto:contact@rraushan.blog">contact@rraushan.blog</a> within 7 days of delivery. I will:</p>
+      <ul>
+        <li>Review the concern against the agreed SOW.</li>
+        <li>Offer revisions if the deliverable does not meet the agreed specification.</li>
+        <li>If the issue cannot be resolved through revision, discuss a partial or full refund at my discretion.</li>
+      </ul>
+      <p>Dissatisfaction due to a change in requirements or preferences after delivery is not grounds for a refund.</p>
+    </div>
+
+    <div class="section">
+      <h2>7. How to Request a Cancellation or Refund</h2>
+      <p>To initiate a cancellation or refund request:</p>
+      <ul>
+        <li>Email <a href="mailto:contact@rraushan.blog">contact@rraushan.blog</a> with the subject line <strong>"Cancellation Request — [Your Name / Invoice #]"</strong>.</li>
+        <li>Include your project reference or invoice number and the reason for cancellation.</li>
+        <li>I will acknowledge your request within 2 business days and confirm the applicable refund amount.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>8. Refund Processing</h2>
+      <p>Approved refunds are processed via the original payment method (Stripe). Processing time after approval:</p>
+      <ul>
+        <li><strong>Credit / debit card:</strong> 5–10 business days, depending on your card issuer.</li>
+        <li><strong>Other payment methods:</strong> 7–14 business days.</li>
+      </ul>
+      <p>Stripe's transaction fees (typically 2–3%) are non-recoverable and will be deducted from the refunded amount where applicable.</p>
+    </div>
+
+    <div class="section">
+      <h2>9. Contact</h2>
+      <p>For any questions about this policy, please contact:</p>
+      <p>
+        <strong>Rakesh Raushan</strong><br>
+        Email: <a href="mailto:contact@rraushan.blog">contact@rraushan.blog</a><br>
+        Website: <a href="https://rraushan.blog/portfolio/">rraushan.blog/portfolio</a>
+      </p>
+    </div>
+
+    <footer class="legal-footer">
+      <a href="/portfolio/">← Portfolio</a>
+      <a href="/portfolio/terms.html">Terms &amp; Conditions</a>
+      <a href="/portfolio/privacy.html">Privacy Policy</a>
+    </footer>
+  </div>
+</main>
+
+</body>
+</html>

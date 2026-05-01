@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms &amp; Conditions — Rakesh Raushan</title>
+<meta name="description" content="Terms and Conditions for freelance services provided by Rakesh Raushan.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #f7f5f0;
+    --surface: #fffefb;
+    --ink:     #1a1816;
+    --ink2:    #4a4540;
+    --ink3:    #8a8278;
+    --accent:  #c84b2f;
+    --border:  rgba(26,24,22,0.10);
+    --border2: rgba(26,24,22,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:      #1a1816;
+      --surface: #1e1c1a;
+      --ink:     #d4cfc8;
+      --ink2:    #8a8278;
+      --ink3:    #6a6560;
+      --accent:  #d4634a;
+      --border:  rgba(212,207,200,0.12);
+      --border2: rgba(212,207,200,0.06);
+    }
+    ::-webkit-scrollbar              { background: #1a1816; }
+    ::-webkit-scrollbar-thumb        { background: #3a3632; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover  { background: #4a4540; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 15px;
+    font-weight: 300;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 0 32px; }
+
+  /* Topbar */
+  .topbar { background: #1a1816; padding: 14px 0; }
+  .topbar .container { display: flex; align-items: center; justify-content: space-between; }
+  .topbar-brand { font-family: 'Instrument Serif', serif; font-size: 18px; color: #d4cfc8; text-decoration: none; }
+  .topbar-back { font-size: 13px; color: #8a8278; text-decoration: none; transition: color 0.15s; }
+  .topbar-back:hover { color: #d4cfc8; }
+
+  /* Document */
+  .doc { padding: 56px 0 96px; }
+  .doc-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .doc-title {
+    font-family: 'Instrument Serif', serif; font-size: 38px;
+    font-weight: 400; letter-spacing: -0.4px; margin-bottom: 8px; color: var(--ink);
+  }
+  .doc-meta { font-size: 13px; color: var(--ink3); margin-bottom: 48px; font-family: 'DM Mono', monospace; }
+
+  .section { margin-bottom: 40px; }
+  .section h2 {
+    font-family: 'Instrument Serif', serif; font-size: 22px;
+    font-weight: 400; margin-bottom: 12px; color: var(--ink);
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .section p { color: var(--ink2); margin-bottom: 12px; }
+  .section p:last-child { margin-bottom: 0; }
+  .section ul { color: var(--ink2); padding-left: 20px; margin-bottom: 12px; }
+  .section ul li { margin-bottom: 6px; }
+  strong { color: var(--ink); font-weight: 500; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Footer */
+  .legal-footer {
+    border-top: 1px solid var(--border); padding: 32px 0;
+    display: flex; flex-wrap: wrap; gap: 16px 32px;
+    font-size: 13px; color: var(--ink3);
+  }
+  .legal-footer a { color: var(--ink3); text-decoration: none; }
+  .legal-footer a:hover { color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .container { padding: 0 20px; }
+    .doc-title { font-size: 28px; }
+    .doc { padding: 40px 0 64px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="container">
+    <a href="/portfolio/" class="topbar-brand">Rakesh Raushan</a>
+    <a href="/portfolio/" class="topbar-back">← Back to portfolio</a>
+  </div>
+</nav>
+
+<main class="doc">
+  <div class="container">
+    <p class="doc-label">Legal</p>
+    <h1 class="doc-title">Terms &amp; Conditions</h1>
+    <p class="doc-meta">Effective date: 1 May 2026 &nbsp;·&nbsp; Last updated: 1 May 2026</p>
+
+    <div class="section">
+      <h2>1. Overview</h2>
+      <p>These Terms and Conditions ("Terms") govern the freelance services provided by <strong>Rakesh Raushan</strong>, an individual freelancer operating under the website <strong>rraushan.blog</strong> ("I", "me", or "the Service Provider"), to clients ("you" or "Client").</p>
+      <p>By engaging my services, making a payment, or signing a project agreement, you agree to be bound by these Terms. If you do not agree, please do not proceed with the engagement.</p>
+    </div>
+
+    <div class="section">
+      <h2>2. Services</h2>
+      <p>I provide the following professional services on a freelance basis:</p>
+      <ul>
+        <li><strong>ML Engineering</strong> — inference optimization, model training pipelines, production deployment</li>
+        <li><strong>Python Development</strong> — data pipelines, backend APIs, CLI tools, automation scripts</li>
+        <li><strong>Technical Writing</strong> — documentation, tutorials, blog posts, and technical guides</li>
+        <li><strong>System Design Review</strong> — architecture review and consultation for ML and data-intensive systems</li>
+      </ul>
+      <p>The specific scope of work, deliverables, timeline, and pricing for each engagement are agreed upon in writing (email or project proposal) before any work begins.</p>
+    </div>
+
+    <div class="section">
+      <h2>3. Engagement &amp; Scope of Work</h2>
+      <p>Every project begins with a scoping discussion. A formal proposal or statement of work ("SOW") outlining deliverables, timeline, and cost will be shared for your approval before work commences.</p>
+      <p>Any changes to the agreed scope — additional features, revised requirements, or expanded deliverables — must be agreed upon in writing and may result in revised pricing and timelines. Out-of-scope work will not be undertaken without explicit written approval from both parties.</p>
+    </div>
+
+    <div class="section">
+      <h2>4. Payment Terms</h2>
+      <p>Payment terms are specified in the project proposal. Standard terms are:</p>
+      <ul>
+        <li><strong>Short engagements (under ₹20,000 or USD 250):</strong> Full payment before work begins.</li>
+        <li><strong>Larger engagements:</strong> A deposit of 50% is due before work begins; the remaining 50% is due upon delivery of final deliverables.</li>
+        <li><strong>Milestone-based projects:</strong> Payment schedule tied to agreed milestones as specified in the SOW.</li>
+      </ul>
+      <p>Payments are processed securely via Stripe. Invoices are due within <strong>7 days</strong> of issuance. Overdue invoices may incur a late fee of 2% per month on the outstanding balance.</p>
+      <p>All prices are exclusive of applicable taxes. Clients are responsible for any taxes applicable in their jurisdiction.</p>
+    </div>
+
+    <div class="section">
+      <h2>5. Delivery &amp; Revisions</h2>
+      <p>Deliverables will be provided by the date specified in the SOW, subject to timely receipt of required materials and feedback from the Client. Delays caused by the Client may result in revised timelines.</p>
+      <p>Each engagement includes a reasonable revision round as specified in the proposal. Revisions must be requested within <strong>7 days</strong> of delivery. Requests beyond the agreed revision scope will be quoted and billed separately.</p>
+    </div>
+
+    <div class="section">
+      <h2>6. Client Responsibilities</h2>
+      <p>The Client agrees to:</p>
+      <ul>
+        <li>Provide timely, accurate, and complete information, materials, and feedback required for the project.</li>
+        <li>Respond to communications within a reasonable timeframe (generally 2–3 business days).</li>
+        <li>Ensure that any materials provided do not infringe the intellectual property rights of third parties.</li>
+        <li>Make payments on time as per the agreed schedule.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>7. Intellectual Property</h2>
+      <p>Upon receipt of full payment, all custom deliverables created specifically for the Client are assigned to the Client. The Client receives full ownership and rights to use, modify, and distribute those deliverables.</p>
+      <p>I retain the right to display the work in my portfolio and use general methodologies, tools, and know-how developed during the engagement for future projects, provided no confidential information is disclosed.</p>
+      <p>Any third-party libraries, frameworks, or tools incorporated in the deliverables remain subject to their respective licences.</p>
+    </div>
+
+    <div class="section">
+      <h2>8. Confidentiality</h2>
+      <p>I agree to keep confidential any proprietary or sensitive information shared by the Client during the engagement and will not disclose it to third parties without written consent, except as required by law.</p>
+      <p>Where required, a separate Non-Disclosure Agreement (NDA) can be signed prior to commencement of work.</p>
+    </div>
+
+    <div class="section">
+      <h2>9. Limitation of Liability</h2>
+      <p>My total liability to the Client for any claim arising out of or in connection with the services shall not exceed the total fees paid for the specific engagement giving rise to the claim.</p>
+      <p>I am not liable for any indirect, incidental, consequential, or punitive damages, including loss of profit, data, or business opportunities, arising from the use of deliverables.</p>
+    </div>
+
+    <div class="section">
+      <h2>10. Cancellation &amp; Refunds</h2>
+      <p>Please refer to the <a href="/portfolio/refund.html">Cancellation &amp; Refund Policy</a> for full details on cancellations and refunds.</p>
+    </div>
+
+    <div class="section">
+      <h2>11. Governing Law &amp; Dispute Resolution</h2>
+      <p>These Terms are governed by the laws of <strong>India</strong>. Any disputes arising out of or in connection with these Terms shall first be attempted to be resolved amicably through good-faith negotiation.</p>
+      <p>If resolution cannot be reached within 30 days, disputes shall be subject to the exclusive jurisdiction of the courts of India.</p>
+    </div>
+
+    <div class="section">
+      <h2>12. Amendments</h2>
+      <p>I reserve the right to update these Terms at any time. Changes will be effective upon posting to this page with an updated "Last updated" date. Continued engagement with my services after changes constitutes acceptance of the revised Terms.</p>
+    </div>
+
+    <div class="section">
+      <h2>13. Contact</h2>
+      <p>For questions about these Terms, please contact:</p>
+      <p>
+        <strong>Rakesh Raushan</strong><br>
+        Email: <a href="mailto:contact@rraushan.blog">contact@rraushan.blog</a><br>
+        Website: <a href="https://rraushan.blog/portfolio/">rraushan.blog/portfolio</a>
+      </p>
+    </div>
+
+    <footer class="legal-footer">
+      <a href="/portfolio/">← Portfolio</a>
+      <a href="/portfolio/privacy.html">Privacy Policy</a>
+      <a href="/portfolio/refund.html">Cancellation &amp; Refund Policy</a>
+    </footer>
+  </div>
+</main>
+
+</body>
+</html>
